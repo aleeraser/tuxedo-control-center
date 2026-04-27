@@ -129,7 +129,7 @@ export class TccTray {
                 ],
             },
             { type: 'separator' },
-            { label: this.state.tccGUIVersion, type: 'normal', enabled: false },
+            { label: this.state.tccGUIVersion + '_ale', type: 'normal', enabled: false },
             { type: 'separator' },
             { label: 'Exit', type: 'normal', click: (): void => this.events.exitClick() },
         ]);
