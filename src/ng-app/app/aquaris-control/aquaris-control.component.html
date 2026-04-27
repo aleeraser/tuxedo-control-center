@@ -67,7 +67,13 @@ along with TUXEDO Control Center.  If not, see <https://www.gnu.org/licenses/>.
                 </mat-menu>
                 <div class="tcc-gauge">
                     <mwl-gauge [max]="100" [min]="0" [value]="fanSpeed.value" [showValue]="false" [dialStartAngle]="130" [dialEndAngle]="50" [animated]="true" [animationDuration]="0.3"> </mwl-gauge>
-                    <div class="custom-value-text">{{ fanSpeed.value }}</div>
+                    <input matInput
+                        #fanGaugeInput
+                        class="custom-value-text fan-gauge-input"
+                        [formControl]="ctrlFanDutyCycleTextInput"
+                        [placeholder]="fanSpeed.value + ''"
+                        (keydown.enter)="fanSpeedTextInput(); fanGaugeInput.blur()"
+                        maxlength="3">
                     <div class="unit-text">%</div>
                     <svg viewBox="0 0 512 512" class="icon">
                         <use href="./assets/images/icon_fan.svg#Icon"></use>
