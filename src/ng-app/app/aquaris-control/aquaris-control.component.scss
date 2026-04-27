@@ -257,6 +257,21 @@
     border-style: unset;
     background-color: transparent;
     outline: none;
+    color: gray;
+
+    &:not(:focus) {
+        color: inherit;
+    }
+
+    &::placeholder {
+        color: inherit;
+        opacity: 1;
+    }
+
+    &:focus::placeholder {
+        color: gray;
+        opacity: 1;
+    }
 }
 
 .fan-speed-edit {
