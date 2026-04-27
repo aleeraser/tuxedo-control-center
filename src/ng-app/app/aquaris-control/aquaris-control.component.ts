@@ -76,7 +76,7 @@ export class AquarisControlComponent implements OnInit, AfterContentInit, OnDest
 
     public fwVersion: string = '';
 
-    public showPumpControls: boolean = false;
+    public showPumpControls: boolean = true;
 
     public readonly TAB_COLORPICKER: number = 0;
     public readonly TAB_ANIMATION: number = 1;
