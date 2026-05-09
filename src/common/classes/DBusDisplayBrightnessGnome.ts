@@ -83,7 +83,12 @@ export class DBusDisplayBrightnessGnome {
                 if (iface === undefined) {
                     return false;
                 } else {
-                    return true;
+                    try {
+                        await iface.Get(this.propertyInterface, this.methodName);
+                        return true;
+                    } catch (e) {
+                        return false;
+                    }
                 }
             }
             return false;
