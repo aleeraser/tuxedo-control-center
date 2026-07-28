@@ -565,6 +565,9 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
             TUXEDODevice.STELLARIS17I06,
             TUXEDODevice.STELLARIS16A07,
             TUXEDODevice.STELLARIS16I07,
+            TUXEDODevice.STELLARIS16I08_IPS,
+            TUXEDODevice.STELLARIS16I08_MLED,
+            TUXEDODevice.STELLARIS16I08_OLED,
         ];
 
         if (isTuxedo) {
@@ -615,6 +618,9 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
         dmiSKUDeviceMap.set('STELLARIS1XA05', TUXEDODevice.STELLARIS1XA05);
         dmiSKUDeviceMap.set('STELLARIS16I06', TUXEDODevice.STELLARIS16I06);
         dmiSKUDeviceMap.set('STELLARIS17I06', TUXEDODevice.STELLARIS17I06);
+        dmiSKUDeviceMap.set('STELLARIS16G8I-IPS', TUXEDODevice.STELLARIS16I08_IPS);
+        dmiSKUDeviceMap.set('STELLARIS16G8I-MLED', TUXEDODevice.STELLARIS16I08_MLED);
+        dmiSKUDeviceMap.set('STELLARIS16G8I-OLED', TUXEDODevice.STELLARIS16I08_OLED);
         dmiSKUDeviceMap.set('STELLSL15A06', TUXEDODevice.STELLSL15A06);
         dmiSKUDeviceMap.set('STELLSL15I06', TUXEDODevice.STELLSL15I06);
         dmiSKUDeviceMap.set('AURA14GEN3', TUXEDODevice.AURA14G3);
