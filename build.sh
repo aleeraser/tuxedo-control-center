@@ -17,8 +17,10 @@ check_err() {
 npm run pack-prod -- rpm
 check_err $?
 
+sudo dnf versionlock delete tuxedo-control-center
 sudo dnf reinstall $git_repo/dist/packages/tuxedo-control-center_*.rpm
 check_err $?
+sudo dnf versionlock add tuxedo-control-center
 
 if [ ! -f "$desktop_file.bak" ]; then
     echo "Backing up existing .desktop file..."
