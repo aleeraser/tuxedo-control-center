@@ -17,9 +17,11 @@
  * along with TUXEDO Control Center.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { spawn } from 'node:child_process';
 import * as fs from 'node:fs';
 import type { ClientRequest, IncomingMessage } from 'node:http';
 import * as https from 'node:https';
+import * as path from 'node:path';
 import { type IpcMainInvokeEvent, ipcMain } from 'electron';
 import { execCommandAsync } from '../../common/classes/Utils';
 import { tccWindow } from './browserWindowsAPI';
@@ -27,7 +29,7 @@ import { execCmd, writeTextFile } from './utilsAPI';
 
 export const systemInfosURL: string =
     'https://raw.githubusercontent.com/tuxedocomputers/tuxedo-systeminfos/refs/heads/main/files/usr/bin/systeminfos.sh';
-const systemInfosTmpFilePath: string = '/tmp/tcc/systeminfos.sh';
+const systemInfosTmpFilePath: string = '/usr/libexec/tuxedo-control-center/systeminfos.sh';
 
 async function getSystemInfos(): Promise<Buffer> {
     return new Promise<Buffer>(
@@ -67,18 +69,12 @@ async function runSystemInfos(ticketNumber: string): Promise<void> {
         let systemInfosPath: string = '';
 
         if (!systemInfosPackageAvailable) {
-            if (!fs.existsSync(systemInfosTmpFilePath)) {
-                console.log(
-                    `systemInfosAPI: runSystemInfos: tuxedo-systeminfo does not exist, downloading ${systemInfosTmpFilePath}`,
-                );
+            console.log(
+                `systemInfosAPI: runSystemInfos: tuxedo-systeminfo does not exist, downloading ${systemInfosTmpFilePath}`,
+            );
 
-                const fileData: string = await downloadSystemInfos();
-                await writeSystemInfosFile(fileData, systemInfosTmpFilePath);
-            } else {
-                console.log(
-                    `systemInfosAPI: runSystemInfos: tuxedo-systeminfo does not exist, but ${systemInfosTmpFilePath} does`,
-                );
-            }
+            const fileData: string = await downloadSystemInfos();
+            await writeSystemInfosFile(fileData, systemInfosTmpFilePath);
 
             systemInfosPath = systemInfosTmpFilePath;
         } else {
@@ -108,9 +104,34 @@ async function writeSystemInfosFile(fileData: string, systemInfosFilePath: strin
     updateSystemInfosLabel(`Writing ${systemInfosFilePath}`);
 
     try {
-        await writeTextFile(systemInfosFilePath, fileData, { mode: 0o755 });
-    } catch (_err: unknown) {
-        throw new Error(`systemInfosAPI: writeSystemInfosFile: Failed to write ${systemInfosFilePath}`);
+        // using pkexec to have permissions to write into /usr/libexec/
+        // using one pkexec command to avoid multiple password inputs
+        const command = `pkexec sh -c "rm -f ${systemInfosFilePath} && mkdir -p '${path.dirname(systemInfosFilePath)}' && cat > '${systemInfosFilePath}'"`;
+        const proc = spawn(command, {
+            stdio: ['pipe', 'inherit', 'inherit'],
+            shell: true,
+        });
+
+        proc.stdin.write(fileData);
+        proc.stdin.end();
+
+        await new Promise(
+            (resolve: (value: number | PromiseLike<number>) => void, reject: (reason?: unknown) => void) => {
+                proc?.on('close', (code: number) => {
+                    if (code === 0) {
+                        resolve(code);
+                    } else {
+                        reject(code);
+                    }
+                });
+
+                proc?.on('error', (err: unknown) => {
+                    reject(err);
+                });
+            },
+        );
+    } catch (err: unknown) {
+        throw new Error(`systemInfosAPI: writeSystemInfosFile: Failed to write ${systemInfosFilePath} => ${err}`);
     }
 }
 
