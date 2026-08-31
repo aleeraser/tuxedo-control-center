@@ -1,5 +1,13 @@
 # Changelog
 
+## [] - UNRELEASED
+### Added
+- Aquaris menu for Stellaris Gen8 Intel
+
+### Changed
+- Support => Systeminfos execution path and download privileges for backup path
+
+
 ## [3.0.9] - 2026-08-10
 ### Changed
 - Electron 42 instead of Electron 43
