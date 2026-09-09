@@ -27,7 +27,7 @@ import type { TuxedoControlCenterDaemon } from './TuxedoControlCenterDaemon';
 
 export class DisplayRefreshRateWorker extends DaemonWorker {
     private controller: XDisplayRefreshRateController;
-    private displayInfo: IDisplayFreqRes;
+    private displayInfo: IDisplayFreqRes | undefined;
     private displayInfoFound: boolean = false;
     private previousUsers: string[] = [];
     private wAvailable: boolean = undefined;
@@ -99,12 +99,12 @@ export class DisplayRefreshRateWorker extends DaemonWorker {
                 await this.updateDisplayData();
             }
         }
-        this.setActiveDisplayMode();
+        await this.setActiveDisplayMode();
     }
 
     public async onExit(): Promise<void> {}
 
-    private setActiveDisplayMode(): void {
+    private async setActiveDisplayMode(): Promise<void> {
         const activeprofile: ITccProfile = this.tccd.getCurrentProfile();
 
         const useRefRate: boolean = activeprofile?.display?.useRefRate;
@@ -116,7 +116,7 @@ export class DisplayRefreshRateWorker extends DaemonWorker {
             const hasDifferentRefreshRate: boolean = refreshRate !== activeMode?.refreshRates[0];
 
             if (hasDifferentRefreshRate) {
-                const status: boolean = this.controller.setRefreshRateAndResolution(
+                const status: boolean = await this.controller.setRefreshRateAndResolution(
                     activeMode.xResolution,
                     activeMode.yResolution,
                     refreshRate,
@@ -153,7 +153,7 @@ export class DisplayRefreshRateWorker extends DaemonWorker {
             this.controller.getIsWayland() === false &&
             this.controller.getIsX11() === 1
         ) {
-            this.displayInfo = this.controller.getDisplayModes();
+            this.displayInfo = await this.controller.getDisplayModes();
 
             if (this.displayInfo === undefined) {
                 this.tccd.dbusData.displayModesJSON = '{}';

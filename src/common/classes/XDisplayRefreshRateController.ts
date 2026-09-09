@@ -20,7 +20,7 @@
 import * as child_process from 'node:child_process';
 import * as fs from 'node:fs';
 import type { IDisplayFreqRes, IDisplayMode } from '../models/DisplayFreqRes';
-import { execCommandAsync } from './Utils';
+import { execCommandAsync, spawnCmdAsync } from './Utils';
 
 export class XDisplayRefreshRateController {
     private displayName: string = '';
@@ -165,16 +165,16 @@ export class XDisplayRefreshRateController {
         }
     }
 
-    public getDisplayModes(): IDisplayFreqRes {
+    public async getDisplayModes(): Promise<IDisplayFreqRes | undefined> {
         if (!this.xrandrAvailable) {
             return undefined;
         }
 
         let result: string = '';
         try {
-            result = child_process
-                .execSync(`XAUTHORITY=${this.xAuthorityFile} xrandr -q -display ${this.display} --current`)
-                .toString();
+            result = await spawnCmdAsync('xrandr', ['-q', '-display', `${this.display}`, '--current'], {
+                env: { XAUTHORITY: `${this.xAuthorityFile}` },
+            });
         } catch (err: unknown) {
             console.error(
                 `XDisplayRefreshRateController: getDisplayModes: xrandr failed with xAuthorityFile "${this.xAuthorityFile}" and display "${this.display}" => ${err}`,
@@ -262,11 +262,22 @@ export class XDisplayRefreshRateController {
         }
     }
 
-    public setRefreshRateAndResolution(xRes: number, yRes: number, rate: number): boolean {
+    public async setRefreshRateAndResolution(xRes: number, yRes: number, rate: number): Promise<boolean> {
         if (this.checkVariablesAvailable() && this.isX11 === 1) {
             try {
-                child_process.execSync(
-                    `XAUTHORITY=${this.xAuthorityFile} xrandr -display ${this.display} --output ${this.displayName} --mode ${xRes}x${yRes} -r ${rate}`,
+                await spawnCmdAsync(
+                    'xrandr',
+                    [
+                        '-display',
+                        `${this.display}`,
+                        '--output',
+                        `${this.displayName}`,
+                        '--mode',
+                        `${xRes}x${yRes}`,
+                        '-r',
+                        `${rate}`,
+                    ],
+                    { env: { XAUTHORITY: `${this.xAuthorityFile}` } },
                 );
                 return true;
             } catch (_err: unknown) {
