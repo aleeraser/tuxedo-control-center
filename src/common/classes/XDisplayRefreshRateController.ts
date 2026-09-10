@@ -43,7 +43,7 @@ export class XDisplayRefreshRateController {
         this.isTTY = sessionType === 'tty';
     }
 
-    private setXAuthority(xAuthorityMatch: RegExpMatchArray, userMatch: RegExpMatchArray) {
+    private async setXAuthority(xAuthorityMatch: RegExpMatchArray, userMatch: RegExpMatchArray) {
         // additional checks to make sure environment variables are not taken from login screen
         // sddm XDG_SESSION_TYPE can differ from actual session type
         let xAuthorityFile: string;
@@ -67,7 +67,7 @@ export class XDisplayRefreshRateController {
             // gdm XDG_SESSION_TYPE can differ from actual session type
             // Ubuntu creates xAuthority file with user gdm and that user name is unavailable,
             // but Tuxedo OS with sddm allows the user name gdm
-            const xAuthorityFileInfo: string = child_process.execSync(`ls -l ${xAuthorityFile}`).toString();
+            const xAuthorityFileInfo: string = await spawnCmdAsync('ls', ['-l', `${xAuthorityFile}`], {});
 
             if (xAuthorityFileInfo.includes(' gdm gdm ') && userMatch && userMatch[1] === 'gdm') {
                 this.xAuthorityFile = undefined;
@@ -98,7 +98,7 @@ export class XDisplayRefreshRateController {
         const userMatch: RegExpMatchArray = environmentVariables.match(/^USER=(.*)$/m);
 
         this.setSessionType(xdgSessionMatch);
-        this.setXAuthority(xAuthorityMatch, userMatch);
+        await this.setXAuthority(xAuthorityMatch, userMatch);
 
         this.display = displayMatch ? displayMatch[1].replace('DISPLAY=', '').trim() : '';
 

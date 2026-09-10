@@ -164,6 +164,9 @@ export async function spawnCmdAsync(
                 reject(output);
             }
         });
+        cmd.on('error', (err) => {
+            reject(err);
+        });
     });
 }
 
