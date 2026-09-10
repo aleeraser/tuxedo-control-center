@@ -20,7 +20,7 @@
 import type { Dirent } from 'node:fs';
 
 const fs: typeof import('fs') = require('node:fs');
-const child_process: typeof import('child_process') = require('node:child_process');
+import * as child_process from 'node:child_process';
 
 export function getDirectories(source: string): string[] {
     try {
@@ -141,6 +141,30 @@ export function execCommandSync(command: string): string {
         console.error(`Utils: execCommandSync failed => ${err}`);
         return undefined;
     }
+}
+
+export async function spawnCmdAsync(
+    command: string,
+    args: readonly string[],
+    options: child_process.SpawnOptions,
+): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const cmd = child_process.spawn(command, args, options);
+        let output: string = '';
+        cmd.stdout?.on('data', (data) => {
+            output += data;
+        });
+        cmd.stderr?.on('data', (data) => {
+            output += data;
+        });
+        cmd.on('close', (code) => {
+            if (code === 0) {
+                resolve(output);
+            } else {
+                reject(output);
+            }
+        });
+    });
 }
 
 export function countLines(input: string): number {

@@ -157,9 +157,12 @@ async function executeSystemInfosScript(ticketNumber: string, systemInfosFilePat
     updateSystemInfosLabel(`Running ${systemInfosFilePath}`);
 
     try {
-        await execCmd(
-            `pkexec env TCC_SYSTEM_INFOS=1 DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY XDG_SESSION_TYPE=$XDG_SESSION_TYPE XDG_CURRENT_DESKTOP=$XDG_CURRENT_DESKTOP sh ${systemInfosFilePath} ${ticketNumber}`,
-        );
+        const DISPLAY = process.env.DISPLAY?.replace('"', '');
+        const XAUTHORITY = process.env.XAUTHORITY?.replace('"', '');
+        const XDG_SESSION_TYPE = process.env.XDG_SESSION_TYPE?.replace('"', '');
+        const XDG_CURRENT_DESKTOP = process.env.XDG_CURRENT_DESKTOP?.replace('"', '');
+        const cmd = `pkexec env TCC_SYSTEM_INFOS="1" DISPLAY="${DISPLAY}" XAUTHORITY="${XAUTHORITY}" XDG_SESSION_TYPE="${XDG_SESSION_TYPE}" XDG_CURRENT_DESKTOP="${XDG_CURRENT_DESKTOP}" sh ${systemInfosFilePath} "${ticketNumber}"`;
+        await execCmd(cmd);
     } catch (err: unknown) {
         throw new Error(`systemInfosAPI: executeSystemInfosScript: systeminfos.sh failed => ${err}`);
     }
