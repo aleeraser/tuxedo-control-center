@@ -4,9 +4,9 @@
 ### Added
 - Aquaris menu for Stellaris Gen8 Intel
 
-### Changed
+### Fixed
 - Support => Systeminfos execution path and download privileges for backup path
-
+- Command execution related to refresh rate control
 
 ## [3.0.9] - 2026-08-10
 ### Changed
