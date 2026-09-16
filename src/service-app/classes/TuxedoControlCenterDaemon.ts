@@ -267,7 +267,7 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
     public loadConfigsAndProfiles(): void {
         const dev: TUXEDODevice = this.identifyDevice();
         this.dbusData.device = JSON.stringify(dev);
-        const aq: boolean = this.deviceHasAquaris();
+        const aq: boolean = this.deviceHasAquaris(dev);
         this.dbusData.deviceHasAquaris = aq;
         this.dbusData.isUnsupportedConfigurableTGPDevice = this.getIsUnsupportedConfigurableTGPDevice();
         this.readOrCreateConfigurationFiles(dev);
@@ -545,9 +545,8 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
         return unsupportedDevices.includes(deviceName);
     }
 
-    private deviceHasAquaris(): boolean {
+    private deviceHasAquaris(dev: TUXEDODevice): boolean {
         const dmi = new DMIController('/sys/class/dmi/id');
-        const deviceName: string = dmi.productSKU.readValueNT();
         const boardVendor: string = dmi.boardVendor.readValueNT();
         const chassisVendor: string = dmi.chassisVendor.readValueNT();
         const sysVendor: string = dmi.sysVendor.readValueNT();
@@ -558,17 +557,21 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
             chassisVendor?.toLowerCase().includes('tuxedo') ||
             sysVendor?.toLowerCase().includes('tuxedo');
 
+        const aquarisDevices: TUXEDODevice[] = [
+            TUXEDODevice.STELLARIS1XI04,
+            TUXEDODevice.STEPOL1XA04,
+            TUXEDODevice.STELLARIS1XI05,
+            TUXEDODevice.STELLARIS16I06,
+            TUXEDODevice.STELLARIS17I06,
+            TUXEDODevice.STELLARIS16A07,
+            TUXEDODevice.STELLARIS16I07,
+            TUXEDODevice.STELLARIS16I08_IPS,
+            TUXEDODevice.STELLARIS16I08_MLED,
+            TUXEDODevice.STELLARIS16I08_OLED,
+        ];
+
         if (isTuxedo) {
-            if (
-                deviceName !== undefined &&
-                (deviceName === 'STELLARIS1XI04' ||
-                    deviceName === 'STEPOL1XA04' ||
-                    deviceName === 'STELLARIS1XI05' ||
-                    deviceName === 'STELLARIS16I06' ||
-                    deviceName === 'STELLARIS17I06' ||
-                    deviceName === 'STELLARIS16A07' ||
-                    deviceName === 'STELLARIS16I07')
-            ) {
+            if (aquarisDevices.includes(dev)) {
                 showAquarisMenu = true;
             } else {
                 showAquarisMenu = false;
@@ -615,6 +618,9 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
         dmiSKUDeviceMap.set('STELLARIS1XA05', TUXEDODevice.STELLARIS1XA05);
         dmiSKUDeviceMap.set('STELLARIS16I06', TUXEDODevice.STELLARIS16I06);
         dmiSKUDeviceMap.set('STELLARIS17I06', TUXEDODevice.STELLARIS17I06);
+        dmiSKUDeviceMap.set('STELLARIS16G8I-IPS', TUXEDODevice.STELLARIS16I08_IPS);
+        dmiSKUDeviceMap.set('STELLARIS16G8I-MLED', TUXEDODevice.STELLARIS16I08_MLED);
+        dmiSKUDeviceMap.set('STELLARIS16G8I-OLED', TUXEDODevice.STELLARIS16I08_OLED);
         dmiSKUDeviceMap.set('STELLSL15A06', TUXEDODevice.STELLSL15A06);
         dmiSKUDeviceMap.set('STELLSL15I06', TUXEDODevice.STELLSL15I06);
         dmiSKUDeviceMap.set('AURA14GEN3', TUXEDODevice.AURA14G3);

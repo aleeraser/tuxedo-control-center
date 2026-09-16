@@ -20,7 +20,7 @@
 import * as child_process from 'node:child_process';
 import * as fs from 'node:fs';
 import type { IDisplayFreqRes, IDisplayMode } from '../models/DisplayFreqRes';
-import { execCommandAsync } from './Utils';
+import { execCommandAsync, spawnCmdAsync } from './Utils';
 
 export class XDisplayRefreshRateController {
     private displayName: string = '';
@@ -43,7 +43,7 @@ export class XDisplayRefreshRateController {
         this.isTTY = sessionType === 'tty';
     }
 
-    private setXAuthority(xAuthorityMatch: RegExpMatchArray, userMatch: RegExpMatchArray) {
+    private async setXAuthority(xAuthorityMatch: RegExpMatchArray, userMatch: RegExpMatchArray) {
         // additional checks to make sure environment variables are not taken from login screen
         // sddm XDG_SESSION_TYPE can differ from actual session type
         let xAuthorityFile: string;
@@ -67,7 +67,7 @@ export class XDisplayRefreshRateController {
             // gdm XDG_SESSION_TYPE can differ from actual session type
             // Ubuntu creates xAuthority file with user gdm and that user name is unavailable,
             // but Tuxedo OS with sddm allows the user name gdm
-            const xAuthorityFileInfo: string = child_process.execSync(`ls -l ${xAuthorityFile}`).toString();
+            const xAuthorityFileInfo: string = await spawnCmdAsync('ls', ['-l', `${xAuthorityFile}`], {});
 
             if (xAuthorityFileInfo.includes(' gdm gdm ') && userMatch && userMatch[1] === 'gdm') {
                 this.xAuthorityFile = undefined;
@@ -98,7 +98,7 @@ export class XDisplayRefreshRateController {
         const userMatch: RegExpMatchArray = environmentVariables.match(/^USER=(.*)$/m);
 
         this.setSessionType(xdgSessionMatch);
-        this.setXAuthority(xAuthorityMatch, userMatch);
+        await this.setXAuthority(xAuthorityMatch, userMatch);
 
         this.display = displayMatch ? displayMatch[1].replace('DISPLAY=', '').trim() : '';
 
@@ -165,16 +165,16 @@ export class XDisplayRefreshRateController {
         }
     }
 
-    public getDisplayModes(): IDisplayFreqRes {
+    public async getDisplayModes(): Promise<IDisplayFreqRes | undefined> {
         if (!this.xrandrAvailable) {
             return undefined;
         }
 
         let result: string = '';
         try {
-            result = child_process
-                .execSync(`XAUTHORITY=${this.xAuthorityFile} xrandr -q -display ${this.display} --current`)
-                .toString();
+            result = await spawnCmdAsync('xrandr', ['-q', '-display', `${this.display}`, '--current'], {
+                env: { XAUTHORITY: `${this.xAuthorityFile}` },
+            });
         } catch (err: unknown) {
             console.error(
                 `XDisplayRefreshRateController: getDisplayModes: xrandr failed with xAuthorityFile "${this.xAuthorityFile}" and display "${this.display}" => ${err}`,
@@ -262,11 +262,22 @@ export class XDisplayRefreshRateController {
         }
     }
 
-    public setRefreshRateAndResolution(xRes: number, yRes: number, rate: number): boolean {
+    public async setRefreshRateAndResolution(xRes: number, yRes: number, rate: number): Promise<boolean> {
         if (this.checkVariablesAvailable() && this.isX11 === 1) {
             try {
-                child_process.execSync(
-                    `XAUTHORITY=${this.xAuthorityFile} xrandr -display ${this.display} --output ${this.displayName} --mode ${xRes}x${yRes} -r ${rate}`,
+                await spawnCmdAsync(
+                    'xrandr',
+                    [
+                        '-display',
+                        `${this.display}`,
+                        '--output',
+                        `${this.displayName}`,
+                        '--mode',
+                        `${xRes}x${yRes}`,
+                        '-r',
+                        `${rate}`,
+                    ],
+                    { env: { XAUTHORITY: `${this.xAuthorityFile}` } },
                 );
                 return true;
             } catch (_err: unknown) {
