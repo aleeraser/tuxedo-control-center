@@ -1,6 +1,6 @@
 # Changelog
 
-## [] - UNRELEASED
+## [3.0.10] - 2026-09-16
 ### Added
 - Aquaris menu for Stellaris Gen8 Intel
 
