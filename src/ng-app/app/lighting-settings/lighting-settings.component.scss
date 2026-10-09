@@ -56,6 +56,17 @@
                     right: 0;
                     width: 100%;
                 }
+
+                .align-button-toggle-components {
+                    margin: 0;
+                    position: absolute;
+                    top: 50%;
+                    -ms-transform: translateY(-50%);
+                    transform: translateY(-50%);
+                    right: 0;
+                    display: flex;
+                    justify-content: flex-end;
+                }
             }
 
             .value-tile {

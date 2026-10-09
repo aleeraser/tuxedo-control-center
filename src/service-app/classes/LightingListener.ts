@@ -24,6 +24,7 @@ import {
     type KeyboardCapabilitiesInterface,
     KeyboardColorModes,
     type KeyboardStateInterface,
+    LightbarColorModes,
     type LightbarCapabilitiesInterface,
     type LightbarStateInterface,
 } from '../../common/models/TccSettings';
@@ -113,13 +114,49 @@ export class LightingListener {
         if (!capabilitiesExist) return;
 
         await this.initLightbarStates();
-        console.log('LightingListener: initKeyboard: Lightbar initialization complete');
+        await this.initLightbarSysFSListener();
+        console.log('LightingListener: initLightbar: Lightbar initialization complete');
 
         this.tccd.dbusData.lightbarStatesPendingJSON.subscribe(this.handleLightbarUpdate.bind(this));
 
         const states: LightbarStateInterface | null = this.tccd.settings.lightbarStates;
         if (states && this.tccd.settings.keyboardBacklightControlEnabled) {
             await this.handleLightbarUpdate(JSON.stringify(states));
+        }
+    }
+
+    private async initLightbarSysFSListener(): Promise<void> {
+        if (await fileOKAsync(`${this.lightbarPath}/brightness`)) {
+            fs.watch(`${this.lightbarPath}/brightness`, async () => {
+                try {
+                    const brightness: number = Number(
+                        (await fs.promises.readFile(`${this.lightbarPath}/brightness`)).toString().trim(),
+                    );
+                    if (this.tccd.settings.lightbarStates && !Number.isNaN(brightness)) {
+                        this.tccd.settings.lightbarStates.brightness = brightness;
+                        this.tccd.dbusData.lightbarStatesJSON = JSON.stringify(this.tccd.settings.lightbarStates);
+                    }
+                } catch {}
+            });
+        }
+        if (await fileOKAsync(`${this.lightbarPath}/multi_intensity`)) {
+            fs.watch(`${this.lightbarPath}/multi_intensity`, async () => {
+                if (this.tccd.settings.lightbarStates?.colorMode !== LightbarColorModes.custom) {
+                    return;
+                }
+                try {
+                    const colors: number[] = (await fs.promises.readFile(`${this.lightbarPath}/multi_intensity`))
+                        .toString()
+                        .split(' ')
+                        .map(Number);
+                    if (this.tccd.settings.lightbarStates && colors?.length >= 3) {
+                        this.tccd.settings.lightbarStates.red = colors[0];
+                        this.tccd.settings.lightbarStates.green = colors[1];
+                        this.tccd.settings.lightbarStates.blue = colors[2];
+                        this.tccd.dbusData.lightbarStatesJSON = JSON.stringify(this.tccd.settings.lightbarStates);
+                    }
+                } catch {}
+            });
         }
     }
 
@@ -140,6 +177,7 @@ export class LightingListener {
     private async initLightbarStates(): Promise<void> {
         const currentStates: LightbarStateInterface | null = this.tccd.settings.lightbarStates;
         const defaultState: LightbarStateInterface = {
+            colorMode: LightbarColorModes.custom,
             brightness: 0,
             red: this.lightbarCapabilities.maxRed,
             green: this.lightbarCapabilities.maxGreen,
@@ -148,6 +186,8 @@ export class LightingListener {
 
         if (!currentStates) {
             this.tccd.settings.lightbarStates = defaultState;
+        } else if (currentStates.colorMode === undefined) {
+            currentStates.colorMode = LightbarColorModes.custom;
         }
     }
 
@@ -226,6 +266,9 @@ export class LightingListener {
                     [state.red, state.green, state.blue] = colors;
 
                     this.tccd.dbusData.keyboardStatesJSON = JSON.stringify(this.tccd.settings.keyboardStates);
+                    if (this.tccd.settings.lightbarStates?.colorMode === LightbarColorModes.keyboard) {
+                        await this.syncLightbarToKeyboard();
+                    }
                 }
             });
         }
@@ -461,6 +504,10 @@ export class LightingListener {
             if (this.rgbZonePaths.length > 0) {
                 await this.setBufferInput(this.rgbZonePaths[0], false);
             }
+
+            if (this.tccd.settings.lightbarStates?.colorMode === LightbarColorModes.keyboard) {
+                await this.syncLightbarToKeyboard();
+            }
         } catch (err: unknown) {
             console.log(`LightingListener: writeKeyboardStates: Writing failed => ${err}`);
         }
@@ -468,15 +515,55 @@ export class LightingListener {
 
     private async writeLightbarStates(parsed: LightbarStateInterface): Promise<void> {
         try {
-            await Promise.all([
+            const color =
+                parsed.colorMode === LightbarColorModes.keyboard
+                    ? this.getKeyboardColor()
+                    : { red: parsed.red, green: parsed.green, blue: parsed.blue };
+
+            const writes: Promise<void>[] = [
                 fs.promises.writeFile(`${this.lightbarPath}/brightness`, parsed.brightness.toString()),
-                fs.promises.writeFile(
-                    `${this.lightbarPath}/multi_intensity`,
-                    `${parsed.red} ${parsed.green} ${parsed.blue}`,
-                ),
-            ]);
+            ];
+            if (color) {
+                writes.push(
+                    fs.promises.writeFile(
+                        `${this.lightbarPath}/multi_intensity`,
+                        `${color.red} ${color.green} ${color.blue}`,
+                    ),
+                );
+            }
+            await Promise.all(writes);
         } catch (err: unknown) {
             console.log(`LightingListener: writeLightbarStates: Writing failed => ${err}`);
+        }
+    }
+
+    private getKeyboardColor(): { red: number; green: number; blue: number } | undefined {
+        const keyboardState = this.tccd.settings.keyboardStates?.[0];
+        if (
+            keyboardState &&
+            keyboardState.red !== undefined &&
+            keyboardState.green !== undefined &&
+            keyboardState.blue !== undefined
+        ) {
+            return { red: keyboardState.red, green: keyboardState.green, blue: keyboardState.blue };
+        }
+        return undefined;
+    }
+
+    private async syncLightbarToKeyboard(): Promise<void> {
+        if (!this.lightbarPath || !(await fileOKAsync(`${this.lightbarPath}/multi_intensity`))) {
+            return;
+        }
+        const color = this.getKeyboardColor();
+        if (color) {
+            try {
+                await fs.promises.writeFile(
+                    `${this.lightbarPath}/multi_intensity`,
+                    `${color.red} ${color.green} ${color.blue}`,
+                );
+            } catch (err: unknown) {
+                console.log(`LightingListener: syncLightbarToKeyboard failed => ${err}`);
+            }
         }
     }
 

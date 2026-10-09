@@ -3879,6 +3879,18 @@ Handelsregisternummer HRB 27755
           <context context-type="linenumber">142,145</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="cLightbarColorModeLabel" datatype="html">
+        <source>Color Mode:</source>
+        <target state="translated">Farbmodus:</target>
+      </trans-unit>
+      <trans-unit id="cLightbarColorModeKeyboard" datatype="html">
+        <source>Match keyboard</source>
+        <target state="translated">Wie Tastatur</target>
+      </trans-unit>
+      <trans-unit id="cLightbarColorModeCustom" datatype="html">
+        <source>Custom color</source>
+        <target state="translated">Eigene Farbe</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

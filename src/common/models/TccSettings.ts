@@ -39,6 +39,11 @@ export interface KeyboardCapabilitiesInterface {
     maxBlue?: number;
 }
 
+export enum LightbarColorModes {
+    keyboard = 'keyboard',
+    custom = 'custom',
+}
+
 export interface LightbarCapabilitiesInterface {
     maxBrightness: number;
     maxRed: number;
@@ -55,6 +60,7 @@ export interface KeyboardStateInterface {
 }
 
 export interface LightbarStateInterface {
+    colorMode?: LightbarColorModes;
     brightness: number;
     red: number;
     green: number;

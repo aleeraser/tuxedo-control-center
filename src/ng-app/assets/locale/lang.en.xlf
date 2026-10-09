@@ -3885,6 +3885,18 @@ Commercial register number - Part B of the commercial register - 27755
           <context context-type="linenumber">142,145</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="cLightbarColorModeLabel" datatype="html">
+        <source>Color Mode:</source>
+        <target state="new">Color Mode:</target>
+      </trans-unit>
+      <trans-unit id="cLightbarColorModeKeyboard" datatype="html">
+        <source>Match keyboard</source>
+        <target state="new">Match keyboard</target>
+      </trans-unit>
+      <trans-unit id="cLightbarColorModeCustom" datatype="html">
+        <source>Custom color</source>
+        <target state="new">Custom color</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

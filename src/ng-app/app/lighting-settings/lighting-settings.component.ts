@@ -26,6 +26,7 @@ import {
     type KeyboardCapabilitiesInterface,
     KeyboardColorModes,
     type KeyboardStateInterface,
+    LightbarColorModes,
     type LightbarCapabilitiesInterface,
     type LightbarStateInterface,
 } from '../../../common/models/TccSettings';
@@ -51,6 +52,8 @@ export class LightingComponent implements OnInit, OnDestroy {
     public keyboardMaxBrightness: number = -1;
     public selectedKeyboardZones: number[] = [];
 
+    public lightbarColorModes = LightbarColorModes;
+    public lightbarColorMode: LightbarColorModes = LightbarColorModes.custom;
     public lightbarBrightness: number = -1;
     private lightbarColorHex: string = '#ffffff';
     private lightbarColorHexPending: string = '#ffffff';
@@ -151,6 +154,8 @@ export class LightingComponent implements OnInit, OnDestroy {
     private updateLightbarStates(states: LightbarStateInterface): void {
         if (!states) return;
 
+        this.lightbarColorMode = states.colorMode ?? LightbarColorModes.custom;
+
         const colorInt: number = (states.red << 16) + (states.green << 8) + states.blue;
         const shiftedColorInt: number = (colorInt << 8) >>> 0;
 
@@ -203,13 +208,35 @@ export class LightingComponent implements OnInit, OnDestroy {
         this.setKeyboardStates(this.fillKeyboardStatesFromValues(brightness, this.keyboardColorHex));
     }
 
+    public onLightbarColorModeChange(mode: LightbarColorModes): void {
+        this.lightbarColorMode = mode;
+        const { red, green, blue } = this.intToColor(this.hexToInt(this.lightbarColorHex));
+        this.tccdbus.setLightbarStates({
+            colorMode: mode,
+            brightness: this.lightbarBrightness,
+            red,
+            green,
+            blue,
+        });
+    }
+
+    public isLightbarColorModeKeyboard(): boolean {
+        return this.lightbarColorMode === LightbarColorModes.keyboard;
+    }
+
     public onLightbarBrightnessSliderInput(brightness: number): void {
         if (!this.lightbarColorHex) return;
 
         this.triggerLightbarBrightnessTimeout();
         this.lightbarBrightness = brightness;
         const { red, green, blue } = this.intToColor(this.hexToInt(this.lightbarColorHex));
-        this.tccdbus.setLightbarStates({ brightness, red, green, blue });
+        this.tccdbus.setLightbarStates({
+            colorMode: this.lightbarColorMode,
+            brightness,
+            red,
+            green,
+            blue,
+        });
     }
 
     public onKeyboardColorPickerInput(color: string, zones: number[]): void {
@@ -222,7 +249,13 @@ export class LightingComponent implements OnInit, OnDestroy {
         this.triggerLightbarColorTimeout();
         this.lightbarColorHex = color;
         const { red, green, blue } = this.intToColor(this.hexToInt(color));
-        this.tccdbus.setLightbarStates({ brightness: this.lightbarBrightness, red, green, blue });
+        this.tccdbus.setLightbarStates({
+            colorMode: this.lightbarColorMode,
+            brightness: this.lightbarBrightness,
+            red,
+            green,
+            blue,
+        });
     }
 
     private triggerKeyboardBrightnessTimeout(): void {
@@ -364,6 +397,9 @@ export class LightingComponent implements OnInit, OnDestroy {
     }
 
     public getLightbarColor(): string {
+        if (this.lightbarColorMode === LightbarColorModes.keyboard) {
+            return this.keyboardColorHex[0] ?? '#ffffff';
+        }
         return this.lightbarColorHex ?? '#ffffff';
     }
 

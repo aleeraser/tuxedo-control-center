@@ -141,6 +141,29 @@ along with TUXEDO Control Center.  If not, see <https://www.gnu.org/licenses/>.
             <!-- LIGHTBAR -->
             <p i18n="@@cLightingLightbarSettingsLabel" class="sub-header" *ngIf="lightbarMaxBrightness > 0">Lightbar lighting</p>
 
+            <!-- COLOR MODE -->
+            <mat-grid-list [cols]="gridParams.cols" rowHeight="35px" *ngIf="lightbarMaxBrightness > 0">
+                <mat-grid-tile [colspan]="gridParams.header">
+                    <header i18n="@@cLightbarColorModeLabel">Color Mode:</header>
+                </mat-grid-tile>
+                <mat-grid-tile class="input-tile" [colspan]="gridParams.input + gridParams.value">
+                    <div class="align-button-toggle-components">
+                        <mat-button-toggle-group
+                            class="lightbar-color-mode-toggle"
+                            [value]="lightbarColorMode"
+                            (change)="onLightbarColorModeChange($event.value)">
+                            <mat-button-toggle [value]="lightbarColorModes.keyboard">
+                                <ng-container i18n="@@cLightbarColorModeKeyboard">Match keyboard</ng-container>
+                            </mat-button-toggle>
+                            <mat-button-toggle [value]="lightbarColorModes.custom">
+                                <ng-container i18n="@@cLightbarColorModeCustom">Custom color</ng-container>
+                            </mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="gridParams.undo"> </mat-grid-tile>
+            </mat-grid-list>
+
             <!-- COLOR PICKER -->
             <mat-grid-list [cols]="gridParams.cols" rowHeight="35px" *ngIf="lightbarMaxBrightness > 0">
                 <mat-grid-tile [colspan]="gridParams.header">
@@ -156,6 +179,7 @@ along with TUXEDO Control Center.  If not, see <https://www.gnu.org/licenses/>.
                         #colorPickerElement
                         id="colorPickerElement"
                         [style.background]="getLightbarColor()"
+                        [disabled]="isLightbarColorModeKeyboard()"
                         readonly
                         class="tcc-color-picker color-visualizer"
                         mat-icon-button
