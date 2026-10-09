@@ -74,6 +74,16 @@ along with TUXEDO Control Center.  If not, see <https://www.gnu.org/licenses/>.
         <div class="content"></div>
     </mat-expansion-panel>
 
+    <mat-expansion-panel (click)="gotoComponent('local-dimming')" hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <mat-icon>contrast</mat-icon>
+                <div i18n="@@menuLocalDimming" class="panel-title">Local Dimming</div>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="content"></div>
+    </mat-expansion-panel>
+
     <mat-expansion-panel (click)="gotoComponent('camera-settings')" hideToggle>
         <mat-expansion-panel-header>
             <mat-panel-title>

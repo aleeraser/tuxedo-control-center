@@ -75,6 +75,7 @@ import { InfoComponent } from './info/info.component';
 import { KeyboardBacklightComponent } from './keyboard-backlight/keyboard-backlight.component';
 import { KeyboardVisualComponent } from './keyboard-visual/keyboard-visual.component';
 import { LightbarControlComponent } from './lightbar-control/lightbar-control.component';
+import { LocalDimmingControlComponent } from './local-dimming-control/local-dimming-control.component';
 import { MainGuiComponent } from './main-gui/main-gui.component';
 import { PrimeDialogComponent } from './prime-dialog/prime-dialog.component';
 import { PrimeSelectComponent } from './prime-select/prime-select.component';
@@ -109,6 +110,7 @@ declare const require;
         ToolsComponent,
         KeyboardBacklightComponent,
         LightbarControlComponent,
+        LocalDimmingControlComponent,
         ChangeCryptPasswordComponent,
         FanChartComponent,
         TgpChartComponent,

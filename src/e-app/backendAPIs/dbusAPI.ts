@@ -276,6 +276,30 @@ export const dbusHandlers: Map<string, (...args: any[]) => any> = new Map<string
         );
     })
 
+    .set(DbusAPIFunctions.getLocalDimmingStateJSON, (): Promise<string> => {
+        return new Promise<string>(
+            (resolve: (value: string | PromiseLike<string>) => void, _reject: (reason?: unknown) => void): void => {
+                try {
+                    resolve(tccDBus.getLocalDimmingStateJSON());
+                } catch (err: unknown) {
+                    console.error(`dbusAPI: getLocalDimmingStateJSON failed => ${err}`);
+                }
+            },
+        );
+    })
+
+    .set(DbusAPIFunctions.setLocalDimmingEnabled, (localDimmingEnabled: boolean): Promise<boolean> => {
+        return new Promise<boolean>(
+            (resolve: (value: boolean | PromiseLike<boolean>) => void, _reject: (reason?: unknown) => void): void => {
+                try {
+                    resolve(tccDBus.setLocalDimmingEnabled(localDimmingEnabled));
+                } catch (err: unknown) {
+                    console.error(`dbusAPI: setLocalDimmingEnabled failed => ${err}`);
+                }
+            },
+        );
+    })
+
     .set(DbusAPIFunctions.getFansMinSpeed, (): Promise<number> => {
         return new Promise<number>(
             (resolve: (value: number | PromiseLike<number>) => void, _reject: (reason?: unknown) => void): void => {

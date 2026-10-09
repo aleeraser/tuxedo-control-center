@@ -1,0 +1,62 @@
+.backlight-settings-edit {
+    overflow-x: hidden;
+
+    display: block;
+    position: absolute;
+    top: 10px;
+    bottom: 25px;
+    right: 5px;
+    left: 0px;
+    margin: 0px;
+    padding: 0px;
+    overflow-y: scroll;
+    user-select: none;
+
+    .inner-backlight-settings-edit {
+        margin: 0 10px 10px 10px;
+
+        .local-dimming-content {
+            align-items: center;
+        }
+    }
+}
+
+header {
+    width: 100%;
+    padding-right: 20px;
+    text-align: left;
+    font-size: 16px;
+}
+
+.input-tile {
+    overflow: visible;
+}
+
+.resize-text {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: calc(14 / 18 * 100%);
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 16px;
+}
+
+.align-toggle-components {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    right: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.note {
+    margin-top: 16px;
+    opacity: 0.7;
+    font-size: 14px;
+}

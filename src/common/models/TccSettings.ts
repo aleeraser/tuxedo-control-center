@@ -66,6 +66,16 @@ export interface LightbarStateInterface {
     blue: number;
 }
 
+export interface LocalDimmingStateInterface {
+    supported: boolean;
+    enabled: boolean;
+}
+
+export const defaultLocalDimmingState: LocalDimmingStateInterface = {
+    supported: false,
+    enabled: false,
+};
+
 export interface ITccSettings {
     fahrenheit: boolean;
     stateMap: {

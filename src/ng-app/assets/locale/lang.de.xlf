@@ -1448,6 +1448,46 @@ Handelsregisternummer HRB 27755
           <context context-type="linenumber">113,115</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="menuLocalDimming" datatype="html">
+        <source>Local Dimming</source>
+        <target state="new">Lokales Dimmen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/tools/tools.component.html</context>
+          <context context-type="linenumber">81,83</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingLabel" datatype="html">
+        <source>Mini-LED Local Dimming</source>
+        <target state="new">Mini-LED Lokales Dimmen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/local-dimming-control/local-dimming-control.component.html</context>
+          <context context-type="linenumber">29,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingNotSupported" datatype="html">
+        <source>Your device is not (yet) supported by this control interface, or the driver is too old. At least tuxedo-drivers with mini-LED local dimming support is required.</source>
+        <target state="new">Ihr Gerät wird von dieser Schnittstelle (noch) nicht unterstützt oder der Treiber ist zu alt. Mindestens tuxedo-drivers mit Mini-LED Local-Dimming-Unterstützung ist erforderlich.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/local-dimming-control/local-dimming-control.component.html</context>
+          <context context-type="linenumber">37,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingToggleLabel" datatype="html">
+        <source>Enable local dimming</source>
+        <target state="new">Lokales Dimmen aktivieren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/local-dimming-control/local-dimming-control.component.html</context>
+          <context context-type="linenumber">45,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingNote" datatype="html">
+        <source>Note: The driver turns local dimming off on every boot. This switch is not persisted, it always reflects the current state.</source>
+        <target state="new">Hinweis: Der Treiber schaltet lokales Dimmen bei jedem Systemstart aus. Diese Einstellung wird nicht gespeichert; sie zeigt stets den aktuellen Zustand an.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/local-dimming-control/local-dimming-control.component.html</context>
+          <context context-type="linenumber">57,59</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="menuWebcam" datatype="html">
         <source>Webcam</source>
         <target state="translated">Webcam</target>

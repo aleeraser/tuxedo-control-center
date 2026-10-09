@@ -1,0 +1,40 @@
+<div class="backlight-settings-edit">
+    <mat-card class="tcc-card card-local-dimming inner-backlight-settings-edit">
+        <div class="tcc-options-group">
+            <div class="title-row title-row-margin">
+                <hr />
+                <div class="title">
+                    <mat-icon class="tcc-icons">contrast</mat-icon>
+                    <ng-container i18n="@@cLocalDimmingLabel">Mini-LED Local Dimming</ng-container>
+                </div>
+                <hr />
+            </div>
+        </div>
+
+        <div class="local-dimming-content content resize-text" *ngIf="!isSupported()">
+            <p i18n="@@cLocalDimmingNotSupported">
+                Your device is not (yet) supported by this control interface, or the driver is too old. At least tuxedo-drivers with mini-LED local dimming support is required.
+            </p>
+        </div>
+
+        <div class="local-dimming-content content" *ngIf="isSupported()">
+            <mat-grid-list [cols]="20" rowHeight="35px" class="local-dimming-grid">
+                <mat-grid-tile [colspan]="8">
+                    <header i18n="@@cLocalDimmingToggleLabel">Enable local dimming</header>
+                </mat-grid-tile>
+                <mat-grid-tile class="input-tile" [colspan]="4">
+                    <div class="align-toggle-components">
+                        <mat-slide-toggle
+                            color="primary"
+                            [checked]="chosenEnabled"
+                            (change)="onToggleChange($event.checked)"></mat-slide-toggle>
+                    </div>
+                </mat-grid-tile>
+            </mat-grid-list>
+
+            <p class="note" i18n="@@cLocalDimmingNote">
+                Note: The driver turns local dimming off on every boot. This switch is not persisted, it always reflects the current state.
+            </p>
+        </div>
+    </mat-card>
+</div>
