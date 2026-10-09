@@ -633,10 +633,15 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
         dmiSKUDeviceMap.set('GEMINIGEN4I', TUXEDODevice.GEMINI17I04);
         dmiSKUDeviceMap.set('BA1510', TUXEDODevice.BA1510);
 
-        const skuMatch: TUXEDODevice = dmiSKUDeviceMap.get(productSKU);
-
-        if (skuMatch !== undefined) {
-            return skuMatch;
+        const boardName: string = dmi.boardName.readValueNT();
+        if (boardName === 'X6AF559Y' || boardName === 'XxAF5xxx_mLED') {
+            return TUXEDODevice.STELLARIS16I08_MLED;
+        }
+        if (boardName === 'XxAF5xxx') {
+            return TUXEDODevice.STELLARIS16I08_IPS;
+        }
+        if (boardName === 'GM6PX8_9X') {
+            return TUXEDODevice.STELLARIS1XI05;
         }
 
         const uwidDeviceMap = new Map<number, TUXEDODevice>();
