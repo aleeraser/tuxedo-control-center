@@ -74,6 +74,7 @@ import { GlobalSettingsComponent } from './global-settings/global-settings.compo
 import { InfoComponent } from './info/info.component';
 import { KeyboardVisualComponent } from './keyboard-visual/keyboard-visual.component';
 import { LightingComponent } from './lighting-settings/lighting-settings.component';
+import { LocalDimmingControlComponent } from './local-dimming-control/local-dimming-control.component';
 import { MainGuiComponent } from './main-gui/main-gui.component';
 import { PrimeDialogComponent } from './prime-dialog/prime-dialog.component';
 import { PrimeSelectComponent } from './prime-select/prime-select.component';
@@ -107,6 +108,7 @@ declare const require;
         ShutdownTimerComponent,
         ToolsComponent,
         LightingComponent,
+        LocalDimmingControlComponent,
         ChangeCryptPasswordComponent,
         FanChartComponent,
         TgpChartComponent,

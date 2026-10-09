@@ -62,6 +62,8 @@ export class TccDBusData {
     public lightbarStatesJSON: string = '{}';
     public keyboardStatesPendingJSON: BehaviorSubject<string> = new BehaviorSubject<string>(undefined);
     public lightbarStatesPendingJSON: BehaviorSubject<string> = new BehaviorSubject<string>(undefined);
+    public localDimmingStateJSON: string = '{}';
+    public localDimmingEnabledNewJSON: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(undefined);
     public fansMinSpeed: number = -1;
     public fansOffAvailable: boolean = false;
     public sensorDataCollectionStatus: boolean = false;
@@ -308,6 +310,17 @@ export class TccDBusInterface extends dbus.interface.Interface {
         return true;
     }
 
+    // biome-ignore lint: function is never read because of dbus
+    private GetLocalDimmingStateJSON(): string {
+        return this.data.localDimmingStateJSON;
+    }
+
+    // biome-ignore lint: function is never read because of dbus
+    private SetLocalDimmingEnabled(localDimmingEnabled: boolean): boolean {
+        this.data.localDimmingEnabledNewJSON.next(localDimmingEnabled);
+        return true;
+    }
+
     public ModeReapplyPendingChanged(): boolean {
         return this.data.modeReapplyPending;
     }
@@ -470,6 +483,8 @@ TccDBusInterface.configureMembers({
         GetLightbarStatesJSON: { outSignature: 's' },
         SetKeyboardStatesJSON: { inSignature: 's', outSignature: 'b' },
         SetLightbarStatesJSON: { inSignature: 's', outSignature: 'b' },
+        GetLocalDimmingStateJSON: { outSignature: 's' },
+        SetLocalDimmingEnabled: { inSignature: 'b', outSignature: 'b' },
         GetFansMinSpeed: { outSignature: 'i' },
         GetFansOffAvailable: { outSignature: 'b' },
         GetChargingProfilesAvailable: { outSignature: 's' },

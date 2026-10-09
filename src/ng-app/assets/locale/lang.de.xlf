@@ -3891,6 +3891,26 @@ Handelsregisternummer HRB 27755
         <source>Custom color</source>
         <target state="translated">Eigene Farbe</target>
       </trans-unit>
+      <trans-unit id="menuLocalDimming" datatype="html">
+        <source>Local Dimming</source>
+        <target state="translated">Local Dimming</target>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingLabel" datatype="html">
+        <source>Mini-LED Local Dimming</source>
+        <target state="translated">Mini-LED Local Dimming</target>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingNotSupported" datatype="html">
+        <source>Your device is not (yet) supported by this control interface, or the driver is too old. At least tuxedo-drivers with mini-LED local dimming support is required.</source>
+        <target state="translated">Ihr Gerät wird von dieser Steuerungsschnittstelle nicht unterstützt oder der Treiber ist zu alt. Es werden mindestens tuxedo-drivers mit Unterstützung für Mini-LED Local Dimming benötigt.</target>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingToggleLabel" datatype="html">
+        <source>Enable local dimming</source>
+        <target state="translated">Local Dimming aktivieren</target>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingNote" datatype="html">
+        <source>Note: The driver turns local dimming off on every boot. This switch is not persisted, it always reflects the current state.</source>
+        <target state="translated">Hinweis: Der Treiber schaltet Local Dimming bei jedem Neustart aus. Dieser Schalter wird nicht dauerhaft gespeichert, sondern spiegelt den aktuellen Zustand wider.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

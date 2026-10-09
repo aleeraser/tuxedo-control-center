@@ -33,6 +33,7 @@ import { GlobalSettingsComponent } from './global-settings/global-settings.compo
 import { InfoComponent } from './info/info.component';
 import { KeyboardCapabilitiesResolver, LightbarCapabilitiesResolver } from './lighting.resolver';
 import { LightingComponent } from './lighting-settings/lighting-settings.component';
+import { LocalDimmingControlComponent } from './local-dimming-control/local-dimming-control.component';
 import { LoaderResolver } from './loader.resolver';
 import { MainGuiComponent } from './main-gui/main-gui.component';
 import { PrimeDialogComponent } from './prime-dialog/prime-dialog.component';
@@ -92,6 +93,10 @@ const routes: Routes = [
                     keyboardCapabilities: KeyboardCapabilitiesResolver,
                     lightbarCapabilities: LightbarCapabilitiesResolver,
                 },
+            },
+            {
+                path: 'local-dimming',
+                component: LocalDimmingControlComponent,
             },
             {
                 path: 'camera-settings',

@@ -32,6 +32,7 @@ import type {
     KeyboardStateInterface,
     LightbarCapabilitiesInterface,
     LightbarStateInterface,
+    LocalDimmingStateInterface,
 } from '../../common/models/TccSettings';
 import type { IDbusClientAPI } from '../../e-app/preloadAPIs/DbusClientAPI';
 import type { TDPInfo } from '../../native-lib/TuxedoIOAPI';
@@ -91,6 +92,9 @@ export class TccDBusClientService implements OnDestroy {
     public lightbarStates: BehaviorSubject<LightbarStateInterface> = new BehaviorSubject<LightbarStateInterface>(
         undefined,
     );
+
+    public localDimmingState: BehaviorSubject<LocalDimmingStateInterface> =
+        new BehaviorSubject<LocalDimmingStateInterface>(undefined);
 
     public fansMinSpeed: BehaviorSubject<number> = new BehaviorSubject<number>(undefined);
     public fansOffAvailable: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(undefined);
@@ -192,6 +196,13 @@ export class TccDBusClientService implements OnDestroy {
             {
                 dbusFunctionName: 'getLightbarStatesJSON',
                 dbusFunction: (): Promise<string> => window.dbusAPI.getLightbarStatesJSON(),
+            },
+        ],
+        [
+            this.localDimmingState,
+            {
+                dbusFunctionName: 'getLocalDimmingStateJSON',
+                dbusFunction: (): Promise<string> => window.dbusAPI.getLocalDimmingStateJSON(),
             },
         ],
         [
@@ -436,6 +447,10 @@ export class TccDBusClientService implements OnDestroy {
 
     public setLightbarStates(lightbarStates: LightbarStateInterface): void {
         window.dbusAPI.setLightbarStatesJSON(JSON.stringify(lightbarStates));
+    }
+
+    public setLocalDimmingEnabled(enabled: boolean): void {
+        window.dbusAPI.setLocalDimmingEnabled(enabled);
     }
 
     public async triggerUpdate(): Promise<void> {

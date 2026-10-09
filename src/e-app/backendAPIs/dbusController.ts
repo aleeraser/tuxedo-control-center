@@ -765,6 +765,42 @@ export class TccDBusController {
         }
     }
 
+    async getLocalDimmingStateJSON(): Promise<string> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.GetLocalDimmingStateJSON();
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: getLocalDimmingStateJSON failed => ${err?.text}`);
+                return undefined;
+            }
+
+            console.error(`dbusController: getLocalDimmingStateJSON failed => ${err}`);
+            return undefined;
+        }
+    }
+
+    async setLocalDimmingEnabled(localDimmingEnabled: boolean): Promise<boolean> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.SetLocalDimmingEnabled(localDimmingEnabled);
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: setLocalDimmingEnabled failed => ${err?.text}`);
+                return undefined;
+            }
+
+            console.error(`dbusController: setLocalDimmingEnabled failed => ${err}`);
+            return undefined;
+        }
+    }
+
     async getFansMinSpeed(): Promise<number> {
         try {
             if (this.dbusStatus && this.interface) {

@@ -42,6 +42,8 @@ export enum DbusAPIFunctions {
     getLightbarStatesJSON = 'getLightbarStatesJSON',
     setKeyboardStatesJSON = 'setKeyboardStatesJSON',
     setLightbarStatesJSON = 'setLightbarStatesJSON',
+    getLocalDimmingStateJSON = 'getLocalDimmingStateJSON',
+    setLocalDimmingEnabled = 'setLocalDimmingEnabled',
     getFansMinSpeed = 'getFansMinSpeed',
     getFansOffAvailable = 'getFansOffAvailable',
     getChargingProfilesAvailable = 'getChargingProfilesAvailable',

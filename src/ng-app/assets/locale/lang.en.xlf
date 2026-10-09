@@ -3897,6 +3897,26 @@ Commercial register number - Part B of the commercial register - 27755
         <source>Custom color</source>
         <target state="new">Custom color</target>
       </trans-unit>
+      <trans-unit id="menuLocalDimming" datatype="html">
+        <source>Local Dimming</source>
+        <target state="new">Local Dimming</target>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingLabel" datatype="html">
+        <source>Mini-LED Local Dimming</source>
+        <target state="new">Mini-LED Local Dimming</target>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingNotSupported" datatype="html">
+        <source>Your device is not (yet) supported by this control interface, or the driver is too old. At least tuxedo-drivers with mini-LED local dimming support is required.</source>
+        <target state="new">Your device is not (yet) supported by this control interface, or the driver is too old. At least tuxedo-drivers with mini-LED local dimming support is required.</target>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingToggleLabel" datatype="html">
+        <source>Enable local dimming</source>
+        <target state="new">Enable local dimming</target>
+      </trans-unit>
+      <trans-unit id="cLocalDimmingNote" datatype="html">
+        <source>Note: The driver turns local dimming off on every boot. This switch is not persisted, it always reflects the current state.</source>
+        <target state="new">Note: The driver turns local dimming off on every boot. This switch is not persisted, it always reflects the current state.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
