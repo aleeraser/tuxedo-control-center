@@ -240,6 +240,42 @@ export const dbusHandlers: Map<string, (...args: any[]) => any> = new Map<string
         );
     })
 
+    .set(DbusAPIFunctions.getLightbarCapabilitiesJSON, (): Promise<string> => {
+        return new Promise<string>(
+            (resolve: (value: string | PromiseLike<string>) => void, _reject: (reason?: unknown) => void): void => {
+                try {
+                    resolve(tccDBus.getLightbarCapabilitiesJSON());
+                } catch (err: unknown) {
+                    console.error(`dbusAPI: getLightbarCapabilitiesJSON failed => ${err}`);
+                }
+            },
+        );
+    })
+
+    .set(DbusAPIFunctions.getLightbarStatesJSON, (): Promise<string> => {
+        return new Promise<string>(
+            (resolve: (value: string | PromiseLike<string>) => void, _reject: (reason?: unknown) => void): void => {
+                try {
+                    resolve(tccDBus.getLightbarStatesJSON());
+                } catch (err: unknown) {
+                    console.error(`dbusAPI: getLightbarStatesJSON failed => ${err}`);
+                }
+            },
+        );
+    })
+
+    .set(DbusAPIFunctions.setLightbarStatesJSON, (lightbarStatesJSON: string): Promise<boolean> => {
+        return new Promise<boolean>(
+            (resolve: (value: boolean | PromiseLike<boolean>) => void, _reject: (reason?: unknown) => void): void => {
+                try {
+                    resolve(tccDBus.setLightbarStatesJSON(lightbarStatesJSON));
+                } catch (err: unknown) {
+                    console.error(`dbusAPI: setLightbarStatesJSON failed => ${err}`);
+                }
+            },
+        );
+    })
+
     .set(DbusAPIFunctions.getFansMinSpeed, (): Promise<number> => {
         return new Promise<number>(
             (resolve: (value: number | PromiseLike<number>) => void, _reject: (reason?: unknown) => void): void => {

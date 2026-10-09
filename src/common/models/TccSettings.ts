@@ -46,6 +46,26 @@ export interface KeyboardBacklightStateInterface {
     blue: number;
 }
 
+export enum LightbarColorModes {
+    keyboard = 'keyboard',
+    custom = 'custom',
+}
+
+export interface LightbarCapabilitiesInterface {
+    maxBrightness: number;
+    maxRed: number;
+    maxGreen: number;
+    maxBlue: number;
+}
+
+export interface LightbarStateInterface {
+    colorMode: LightbarColorModes;
+    brightness: number;
+    red: number;
+    green: number;
+    blue: number;
+}
+
 export interface ITccSettings {
     fahrenheit: boolean;
     stateMap: {
@@ -60,7 +80,16 @@ export interface ITccSettings {
     chargingProfile: string | null;
     chargingPriority: string | null;
     keyboardBacklightStates: Array<KeyboardBacklightStateInterface>;
+    lightbarState: LightbarStateInterface;
 }
+
+export const defaultLightbarState: LightbarStateInterface = {
+    colorMode: LightbarColorModes.custom,
+    brightness: 0,
+    red: 255,
+    green: 255,
+    blue: 255,
+};
 
 export const defaultSettings: ITccSettings = {
     fahrenheit: false,
@@ -76,6 +105,7 @@ export const defaultSettings: ITccSettings = {
     chargingProfile: null,
     chargingPriority: null,
     keyboardBacklightStates: [],
+    lightbarState: defaultLightbarState,
 };
 
 export const defaultSettingsXP1508UHD: ITccSettings = {
@@ -92,6 +122,7 @@ export const defaultSettingsXP1508UHD: ITccSettings = {
     chargingProfile: null,
     chargingPriority: null,
     keyboardBacklightStates: [],
+    lightbarState: defaultLightbarState,
 };
 
 const defaultSettingsMobile: ITccSettings = {
@@ -108,6 +139,7 @@ const defaultSettingsMobile: ITccSettings = {
     chargingProfile: null,
     chargingPriority: null,
     keyboardBacklightStates: [],
+    lightbarState: defaultLightbarState,
 };
 
 export const deviceCustomSettings: Map<TUXEDODevice, ITccSettings> = new Map();

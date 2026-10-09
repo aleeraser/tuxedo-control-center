@@ -1,0 +1,129 @@
+<div class="backlight-settings-edit">
+    <mat-card class="tcc-card card-lightbar inner-backlight-settings-edit">
+        <div class="tcc-options-group">
+            <div class="title-row title-row-margin">
+                <hr />
+                <div class="title">
+                    <svg viewBox="0 0 512 512" class="tcc-icons">
+                        <use href="./assets/images/icon_kb_backlight5.svg#Icon"></use>
+                    </svg>
+                    <ng-container i18n="@@cLightbarLabel">Lightbar</ng-container>
+                </div>
+                <hr />
+            </div>
+        </div>
+
+        <div class="lightbar-content content" *ngIf="!isSupported()" class="resize-text">
+            <p i18n="@@cLightbarNotSupported">
+                Your device is not (yet) supported by this control interface, or the driver is too old. At least tuxedo-drivers with lightbar support is required.
+            </p>
+        </div>
+
+        <div class="lightbar-content content" *ngIf="isSupported()">
+            <!-- COLOR MODE -->
+            <mat-grid-list [cols]="gridParams.cols" rowHeight="35px" class="lightbar-grid">
+                <mat-grid-tile [colspan]="gridParams.space"></mat-grid-tile>
+                <mat-grid-tile [colspan]="gridParams.header">
+                    <header i18n="@@cLightbarColorModeLabel">Lightbar Color Mode</header>
+                </mat-grid-tile>
+                <mat-grid-tile class="input-tile" [colspan]="gridParams.input + gridParams.value">
+                    <div class="align-button-toggle-components">
+                        <mat-button-toggle-group
+                            class="lightbar-color-mode-toggle"
+                            [value]="lightbarState?.colorMode"
+                            (change)="onColorModeChange($event.value)">
+                            <mat-button-toggle [value]="colorModes.keyboard">
+                                <ng-container i18n="@@cLightbarColorModeKeyboard">Match keyboard</ng-container>
+                            </mat-button-toggle>
+                            <mat-button-toggle [value]="colorModes.custom">
+                                <ng-container i18n="@@cLightbarColorModeCustom">Own color</ng-container>
+                            </mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="gridParams.undo"> </mat-grid-tile>
+            </mat-grid-list>
+
+            <!-- COLOR PICKER -->
+            <mat-grid-list
+                [cols]="gridParams.cols"
+                rowHeight="35px"
+                class="lightbar-grid"
+                *ngIf="lightbarCapabilities.maxRed > 0 && lightbarCapabilities.maxGreen > 0 && lightbarCapabilities.maxBlue > 0">
+                <mat-grid-tile [colspan]="gridParams.space"></mat-grid-tile>
+                <mat-grid-tile [colspan]="gridParams.header">
+                    <header i18n="@@cLightbarColorLabel">Lightbar Color:</header>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="gridParams.value">
+                    <content class="value">
+                        {{ getEffectiveColor() }}
+                    </content>
+                </mat-grid-tile>
+                <mat-grid-tile class="input-tile" [colspan]="gridParams.input">
+                    <input
+                        #colorPickerElement
+                        id="lightbarColorPickerElement"
+                        class="looks-like-a-button"
+                        [style.background]="getEffectiveColor()"
+                        [disabled]="isColorModeKeyboard()"
+                        readonly
+                        class="tcc-color-picker color-visualizer"
+                        mat-icon-button
+                        color="primary"
+                        [cpPosition]="'bottom'"
+                        [cpPositionOffset]="'0%'"
+                        [cpPositionRelativeToArrow]="false"
+                        [colorPicker]="getEffectiveColor()"
+                        cpAlphaChannel="disabled"
+                        (cpSliderChange)="onColorPickerInput($event.color)"
+                        (cpInputChange)="onColorPickerInput($event.color)"
+                        (cpSliderDragStart)="onColorPickerDragStart()"
+                        (cpSliderDragEnd)="onColorPickerDragEnd()" />
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="gridParams.undo"> </mat-grid-tile>
+            </mat-grid-list>
+
+            <!-- BRIGHTNESS SLIDER -->
+            <mat-grid-list [cols]="gridParams.cols" rowHeight="35px" *ngIf="lightbarCapabilities.maxBrightness > 0">
+                <mat-grid-tile [colspan]="gridParams.space"></mat-grid-tile>
+                <mat-grid-tile [colspan]="gridParams.header">
+                    <header i18n="@@cLightbarBrightnessLabel">Lightbar Brightness</header>
+                </mat-grid-tile>
+                <mat-grid-tile class="value-tile" [colspan]="gridParams.value">
+                    <content class="value"
+                        >{{ (brightnessSlider.value / lightbarCapabilities.maxBrightness) * 100 | number: '1.1-1' }}
+                        %
+                    </content>
+                    <div class="increment-decrement-buttons">
+                        <button
+                            type="button"
+                            mat-icon-button
+                            color="primary"
+                            (mousedown)="startPress(brightnessSlider, -1, +brightnessSlider.min, +brightnessSlider.max)"
+                            (mouseup)="stopPress()"
+                            (mouseleave)="stopPress()">
+                            <mat-icon>remove</mat-icon>
+                        </button>
+                        <button
+                            type="button"
+                            mat-icon-button
+                            color="primary"
+                            (mousedown)="startPress(brightnessSlider, +1, +brightnessSlider.min, +brightnessSlider.max)"
+                            (mouseup)="stopPress()"
+                            (mouseleave)="stopPress()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                </mat-grid-tile>
+                <mat-grid-tile class="input-tile" [colspan]="gridParams.input">
+                    <div class="align-slider-components">
+                        <mat-slider min="0" [max]="lightbarCapabilities.maxBrightness" step="1" color="primary">
+                            <input #brightnessSlider matSliderThumb [(ngModel)]="chosenBrightness" (input)="onBrightnessSliderInput(+brightnessSlider.value)" #ngSliderThumb="matSliderThumb" />
+                        </mat-slider>
+                    </div>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="gridParams.undo"> </mat-grid-tile>
+            </mat-grid-list>
+        </div>
+    </mat-card>
+</div>

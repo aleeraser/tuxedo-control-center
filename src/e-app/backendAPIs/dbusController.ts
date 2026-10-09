@@ -711,6 +711,60 @@ export class TccDBusController {
         }
     }
 
+    async getLightbarCapabilitiesJSON(): Promise<string> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.GetLightbarCapabilitiesJSON();
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: getLightbarCapabilitiesJSON failed => ${err?.text}`);
+                return undefined;
+            }
+
+            console.error(`dbusController: getLightbarCapabilitiesJSON failed => ${err}`);
+            return undefined;
+        }
+    }
+
+    async getLightbarStatesJSON(): Promise<string> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.GetLightbarStatesJSON();
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: getLightbarStatesJSON failed => ${err?.text}`);
+                return undefined;
+            }
+
+            console.error(`dbusController: getLightbarStatesJSON failed => ${err}`);
+            return undefined;
+        }
+    }
+
+    async setLightbarStatesJSON(lightbarStatesJSON: string): Promise<boolean> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.SetLightbarStatesJSON(lightbarStatesJSON);
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: setLightbarStatesJSON failed => ${err?.text}`);
+                return undefined;
+            }
+
+            console.error(`dbusController: setLightbarStatesJSON failed => ${err}`);
+            return undefined;
+        }
+    }
+
     async getFansMinSpeed(): Promise<number> {
         try {
             if (this.dbusStatus && this.interface) {

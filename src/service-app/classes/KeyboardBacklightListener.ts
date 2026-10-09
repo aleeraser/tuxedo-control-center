@@ -385,5 +385,7 @@ export class KeyboardBacklightListener {
         if (updateTCC) {
             this.tccd.dbusData.keyboardBacklightStatesJSON = JSON.stringify(keyboardBacklightStatesNew);
         }
+
+        this.tccd.dbusData.keyboardBacklightStatesJSONSubject.next(JSON.stringify(keyboardBacklightStatesNew));
     }
 }

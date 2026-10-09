@@ -59,6 +59,10 @@ export class TccDBusData {
     public keyboardBacklightCapabilitiesJSON: string = '{}';
     public keyboardBacklightStatesJSON: string = '{}';
     public keyboardBacklightStatesNewJSON: BehaviorSubject<string> = new BehaviorSubject<string>(undefined);
+    public keyboardBacklightStatesJSONSubject: BehaviorSubject<string> = new BehaviorSubject<string>(undefined);
+    public lightbarCapabilitiesJSON: string = '{}';
+    public lightbarStatesJSON: string = '{}';
+    public lightbarStatesNewJSON: BehaviorSubject<string> = new BehaviorSubject<string>(undefined);
     public fansMinSpeed: number = -1;
     public fansOffAvailable: boolean = false;
     public sensorDataCollectionStatus: boolean = false;
@@ -289,6 +293,22 @@ export class TccDBusInterface extends dbus.interface.Interface {
         return true;
     }
 
+    // biome-ignore lint: function is never read because of dbus
+    private GetLightbarCapabilitiesJSON(): string {
+        return this.data.lightbarCapabilitiesJSON;
+    }
+
+    // biome-ignore lint: function is never read because of dbus
+    private GetLightbarStatesJSON(): string {
+        return this.data.lightbarStatesJSON;
+    }
+
+    // biome-ignore lint: function is never read because of dbus
+    private SetLightbarStatesJSON(lightbarStatesJSON: string): boolean {
+        this.data.lightbarStatesNewJSON.next(lightbarStatesJSON);
+        return true;
+    }
+
     public ModeReapplyPendingChanged(): boolean {
         return this.data.modeReapplyPending;
     }
@@ -448,6 +468,9 @@ TccDBusInterface.configureMembers({
         GetKeyboardBacklightCapabilitiesJSON: { outSignature: 's' },
         GetKeyboardBacklightStatesJSON: { outSignature: 's' },
         SetKeyboardBacklightStatesJSON: { inSignature: 's', outSignature: 'b' },
+        GetLightbarCapabilitiesJSON: { outSignature: 's' },
+        GetLightbarStatesJSON: { outSignature: 's' },
+        SetLightbarStatesJSON: { inSignature: 's', outSignature: 'b' },
         GetFansMinSpeed: { outSignature: 'i' },
         GetFansOffAvailable: { outSignature: 'b' },
         GetChargingProfilesAvailable: { outSignature: 's' },

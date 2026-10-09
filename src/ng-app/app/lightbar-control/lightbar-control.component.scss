@@ -1,0 +1,107 @@
+.backlight-settings-edit {
+    overflow-x: hidden;
+
+    display: block;
+    position: absolute;
+    top: 10px;
+    bottom: 25px;
+    right: 5px;
+    left: 0px;
+    margin: 0px;
+    padding: 0px;
+    overflow-y: scroll;
+    user-select: none;
+
+    .inner-backlight-settings-edit {
+        margin: 0 10px 10px 10px;
+
+        .lightbar-content {
+            align-items: center;
+        }
+    }
+}
+
+header {
+    width: 100%;
+    padding-right: 20px;
+    text-align: left;
+    font-size: 16px;
+}
+
+content.value {
+    width: 100%;
+    text-align: left;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.value-tile {
+    overflow: visible;
+
+    .increment-decrement-buttons {
+        display: flex;
+        padding-right: 20px;
+    }
+}
+
+.input-tile {
+    overflow: visible;
+}
+
+.resize-text {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: calc(14 / 18 * 100%);
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 16px;
+}
+
+.align-slider-components {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    right: 0;
+    width: 100%;
+}
+
+.align-button-toggle-components {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    right: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.lightbar-color-mode-toggle {
+    height: 30px;
+}
+
+input {
+    width: 100%;
+    display: flex;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    padding-left: 10px;
+    outline-width: 0;
+    cursor: default !important;
+}
+
+input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed !important;
+}
+
+.mat-mdc-slider {
+    width: 100%;
+    overflow: visible;
+    margin: 0;
+}

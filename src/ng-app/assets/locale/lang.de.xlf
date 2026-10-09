@@ -1384,6 +1384,70 @@ Handelsregisternummer HRB 27755
           <context context-type="linenumber">57,60</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="menuLightbar" datatype="html">
+        <source>Lightbar</source>
+        <target state="translated">Lightbar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/tools/tools.component.html</context>
+          <context context-type="linenumber">71,74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLightbarLabel" datatype="html">
+        <source>Lightbar</source>
+        <target state="translated">Lightbar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/lightbar-control/lightbar-control.component.html</context>
+          <context context-type="linenumber">29,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLightbarNotSupported" datatype="html">
+        <source>Your device is not (yet) supported by this control interface, or the driver is too old. At least tuxedo-drivers with lightbar support is required.</source>
+        <target state="new">Ihr Gerät wird von dieser Schnittstelle noch nicht unterstützt, oder der Treiber ist zu alt. Mindestens tuxedo-drivers mit Lightbar-Unterstützung ist erforderlich.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/lightbar-control/lightbar-control.component.html</context>
+          <context context-type="linenumber">38,41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLightbarColorModeLabel" datatype="html">
+        <source>Lightbar Color Mode</source>
+        <target state="new">Lichtleisten-Farbmodus</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/lightbar-control/lightbar-control.component.html</context>
+          <context context-type="linenumber">47,49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLightbarColorModeKeyboard" datatype="html">
+        <source>Match keyboard</source>
+        <target state="new">Tastaturfarbe folgen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/lightbar-control/lightbar-control.component.html</context>
+          <context context-type="linenumber">56,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLightbarColorModeCustom" datatype="html">
+        <source>Own color</source>
+        <target state="new">Eigene Farbe</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/lightbar-control/lightbar-control.component.html</context>
+          <context context-type="linenumber">59,61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLightbarColorLabel" datatype="html">
+        <source>Lightbar Color:</source>
+        <target state="new">Lichtleisten-Farbe:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/lightbar-control/lightbar-control.component.html</context>
+          <context context-type="linenumber">73,75</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cLightbarBrightnessLabel" datatype="html">
+        <source>Lightbar Brightness</source>
+        <target state="new">Lichtleisten-Helligkeit</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/ng-app/app/lightbar-control/lightbar-control.component.html</context>
+          <context context-type="linenumber">113,115</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="menuWebcam" datatype="html">
         <source>Webcam</source>
         <target state="translated">Webcam</target>
