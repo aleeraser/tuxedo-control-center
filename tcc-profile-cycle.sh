@@ -1,3 +1,4 @@
+#!/bin/bash
 
 # Define the exact IDs of the 3 profiles you want to cycle between, in order.
 # You can change these IDs to match your preferred profiles.
@@ -31,3 +32,33 @@ NEXT_PROFILE_ID="${CYCLE_PROFILES[$NEXT_INDEX]}"
 
 # Apply the new profile
 dbus-send --system --print-reply --dest=com.tuxedocomputers.tccd /com/tuxedocomputers/tccd com.tuxedocomputers.tccd.SetTempProfileById string:"$NEXT_PROFILE_ID" > /dev/null
+
+# Display on-screen OSD notification
+case "$NEXT_PROFILE_ID" in
+  "max_power_custom_profile")
+    TITLE="⚡ Max Power"
+    DESC="PL1: 185W · PL2: 210W · Custom Fan"
+    ICON="power-profile-performance"
+    ;;
+  "medium_power_custom_profile")
+    TITLE="⚖️ Medium Power"
+    DESC="PL1: 80W · PL2: 80W · Balanced Fan"
+    ICON="power-profile-balanced"
+    ;;
+  "low_power_custom_profile")
+    TITLE="🌱 Low Power"
+    DESC="PL1: 45W · PL2: 45W · Quiet Fan"
+    ICON="power-profile-power-saver"
+    ;;
+  *)
+    TITLE="TCC Profile Changed"
+    DESC="$NEXT_PROFILE_ID"
+    ICON="preferences-system-power"
+    ;;
+esac
+
+notify-send -a "TUXEDO Control Center" \
+  -i "$ICON" \
+  -h string:x-canonical-private-synchronous:tcc-profile \
+  -t 1800 \
+  "$TITLE" "$DESC" 2>/dev/null || true
