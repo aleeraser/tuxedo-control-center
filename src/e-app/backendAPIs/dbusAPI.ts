@@ -240,6 +240,72 @@ export const dbusHandlers: Map<string, (...args: any[]) => any> = new Map<string
         );
     })
 
+    .set(DbusAPIFunctions.getKeyboardBacklightKeyMapJSON, (): Promise<string> => {
+        return new Promise<string>(
+            (resolve: (value: string | PromiseLike<string>) => void, _reject: (reason?: unknown) => void): void => {
+                try {
+                    resolve(tccDBus.getKeyboardBacklightKeyMapJSON());
+                } catch (err: unknown) {
+                    console.error(`dbusAPI: getKeyboardBacklightKeyMapJSON failed => ${err}`);
+                }
+            },
+        );
+    })
+
+    .set(DbusAPIFunctions.consumeKeyboardBacklightKeyPressedJSON, (): Promise<string> => {
+        return new Promise<string>(
+            (resolve: (value: string | PromiseLike<string>) => void, _reject: (reason?: unknown) => void): void => {
+                try {
+                    resolve(tccDBus.consumeKeyboardBacklightKeyPressedJSON());
+                } catch (err: unknown) {
+                    console.error(`dbusAPI: consumeKeyboardBacklightKeyPressedJSON failed => ${err}`);
+                }
+            },
+        );
+    })
+
+    .set(
+        DbusAPIFunctions.setKeyboardBacklightKeyMapEntry,
+        (keycode: number, ledIndex: number): Promise<boolean> => {
+            return new Promise<boolean>(
+                (resolve: (value: boolean | PromiseLike<boolean>) => void, _reject: (reason?: unknown) => void): void => {
+                    try {
+                        resolve(tccDBus.setKeyboardBacklightKeyMapEntry(keycode, ledIndex));
+                    } catch (err: unknown) {
+                        console.error(`dbusAPI: setKeyboardBacklightKeyMapEntry failed => ${err}`);
+                    }
+                },
+            );
+        },
+    )
+
+    .set(DbusAPIFunctions.flashKeyboardBacklightLed, (ledIndex: number): Promise<boolean> => {
+        return new Promise<boolean>(
+            (resolve: (value: boolean | PromiseLike<boolean>) => void, _reject: (reason?: unknown) => void): void => {
+                try {
+                    resolve(tccDBus.flashKeyboardBacklightLed(ledIndex));
+                } catch (err: unknown) {
+                    console.error(`dbusAPI: flashKeyboardBacklightLed failed => ${err}`);
+                }
+            },
+        );
+    })
+
+    .set(
+        DbusAPIFunctions.highlightKeyboardBacklightLed,
+        (ledIndex: number, on: boolean): Promise<boolean> => {
+            return new Promise<boolean>(
+                (resolve: (value: boolean | PromiseLike<boolean>) => void, _reject: (reason?: unknown) => void): void => {
+                    try {
+                        resolve(tccDBus.highlightKeyboardBacklightLed(ledIndex, on));
+                    } catch (err: unknown) {
+                        console.error(`dbusAPI: highlightKeyboardBacklightLed failed => ${err}`);
+                    }
+                },
+            );
+        },
+    )
+
     .set(DbusAPIFunctions.getLightbarCapabilitiesJSON, (): Promise<string> => {
         return new Promise<string>(
             (resolve: (value: string | PromiseLike<string>) => void, _reject: (reason?: unknown) => void): void => {

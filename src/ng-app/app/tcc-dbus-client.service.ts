@@ -29,6 +29,7 @@ import type { ITccProfile, TccProfile } from '../../common/models/TccProfile';
 import type {
     ITccSettings,
     KeyboardBacklightCapabilitiesInterface,
+    KeyboardBacklightKeyMapInterface,
     KeyboardBacklightStateInterface,
     LightbarCapabilitiesInterface,
     LightbarStateInterface,
@@ -86,6 +87,8 @@ export class TccDBusClientService implements OnDestroy {
     public keyboardBacklightStates: BehaviorSubject<Array<KeyboardBacklightStateInterface>> = new BehaviorSubject<
         Array<KeyboardBacklightStateInterface>
     >(undefined);
+    public keyboardBacklightKeyMap: BehaviorSubject<KeyboardBacklightKeyMapInterface> =
+        new BehaviorSubject<KeyboardBacklightKeyMapInterface>(undefined);
 
     public lightbarCapabilities: BehaviorSubject<LightbarCapabilitiesInterface> =
         new BehaviorSubject<LightbarCapabilitiesInterface>(undefined);
@@ -181,6 +184,13 @@ export class TccDBusClientService implements OnDestroy {
             {
                 dbusFunctionName: 'getKeyboardBacklightStatesJSON',
                 dbusFunction: (): Promise<string> => window.dbusAPI.getKeyboardBacklightStatesJSON(),
+            },
+        ],
+        [
+            this.keyboardBacklightKeyMap,
+            {
+                dbusFunctionName: 'getKeyboardBacklightKeyMapJSON',
+                dbusFunction: (): Promise<string> => window.dbusAPI.getKeyboardBacklightKeyMapJSON(),
             },
         ],
         [
@@ -443,6 +453,31 @@ export class TccDBusClientService implements OnDestroy {
 
     public setKeyboardBacklightStates(keyboardBacklightStates: Array<KeyboardBacklightStateInterface>): void {
         window.dbusAPI.setKeyboardBacklightStatesJSON(JSON.stringify(keyboardBacklightStates));
+    }
+
+    public async consumeKeyboardBacklightKeyPressed(): Promise<number | undefined> {
+        const json: string = await window.dbusAPI.consumeKeyboardBacklightKeyPressedJSON();
+        if (!json) {
+            return undefined;
+        }
+        try {
+            const parsed: { keycode?: number } = JSON.parse(json);
+            return typeof parsed.keycode === 'number' ? parsed.keycode : undefined;
+        } catch (_err: unknown) {
+            return undefined;
+        }
+    }
+
+    public async setKeyboardBacklightKeyMapEntry(keycode: number, ledIndex: number): Promise<boolean> {
+        return await window.dbusAPI.setKeyboardBacklightKeyMapEntry(keycode, ledIndex);
+    }
+
+    public async flashKeyboardBacklightLed(ledIndex: number): Promise<boolean> {
+        return await window.dbusAPI.flashKeyboardBacklightLed(ledIndex);
+    }
+
+    public async highlightKeyboardBacklightLed(ledIndex: number, on: boolean): Promise<boolean> {
+        return await window.dbusAPI.highlightKeyboardBacklightLed(ledIndex, on);
     }
 
     public setLightbarStates(lightbarStates: LightbarStateInterface): void {

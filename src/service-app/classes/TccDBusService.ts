@@ -43,6 +43,12 @@ export class TccDBusService extends DaemonWorker {
             this.tccd.triggerStateCheck();
         };
         options.chargingWorker = this.tccd.getChargingWorker();
+        options.setKeyboardBacklightKeyMapEntry = (keycode: number, ledIndex: number): boolean =>
+            this.tccd.setKeyboardBacklightKeyMapEntry(keycode, ledIndex);
+        options.flashKeyboardBacklightLed = (ledIndex: number): boolean =>
+            this.tccd.flashKeyboardBacklightLed(ledIndex);
+        options.highlightKeyboardBacklightLed = (ledIndex: number, on: boolean): boolean =>
+            this.tccd.highlightKeyboardBacklightLed(ledIndex, on);
 
         try {
             this.bus = dbus.systemBus();

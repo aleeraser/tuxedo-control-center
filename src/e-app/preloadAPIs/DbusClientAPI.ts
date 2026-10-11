@@ -58,6 +58,20 @@ export const DbusClientAPI = {
             DbusAPIFunctions.setKeyboardBacklightStatesJSON,
             keyboardBacklightStatesJSON,
         ]),
+    getKeyboardBacklightKeyMapJSON: (): Promise<string> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getKeyboardBacklightKeyMapJSON]),
+    consumeKeyboardBacklightKeyPressedJSON: (): Promise<string> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.consumeKeyboardBacklightKeyPressedJSON]),
+    setKeyboardBacklightKeyMapEntry: (keycode: number, ledIndex: number): Promise<boolean> =>
+        ipcRenderer.invoke(dbusAPIHandle, [
+            DbusAPIFunctions.setKeyboardBacklightKeyMapEntry,
+            keycode,
+            ledIndex,
+        ]),
+    flashKeyboardBacklightLed: (ledIndex: number): Promise<boolean> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.flashKeyboardBacklightLed, ledIndex]),
+    highlightKeyboardBacklightLed: (ledIndex: number, on: boolean): Promise<boolean> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.highlightKeyboardBacklightLed, ledIndex, on]),
     getLightbarCapabilitiesJSON: (): Promise<string> =>
         ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getLightbarCapabilitiesJSON]),
     getLightbarStatesJSON: (): Promise<string> => ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getLightbarStatesJSON]),
@@ -148,6 +162,11 @@ export interface IDbusClientAPI {
     getKeyboardBacklightCapabilitiesJSON: () => Promise<string>;
     getKeyboardBacklightStatesJSON: () => Promise<string>;
     setKeyboardBacklightStatesJSON: (keyboardBacklightStatesJSON: string) => Promise<boolean>;
+    getKeyboardBacklightKeyMapJSON: () => Promise<string>;
+    consumeKeyboardBacklightKeyPressedJSON: () => Promise<string>;
+    setKeyboardBacklightKeyMapEntry: (keycode: number, ledIndex: number) => Promise<boolean>;
+    flashKeyboardBacklightLed: (ledIndex: number) => Promise<boolean>;
+    highlightKeyboardBacklightLed: (ledIndex: number, on: boolean) => Promise<boolean>;
     getLightbarCapabilitiesJSON: () => Promise<string>;
     getLightbarStatesJSON: () => Promise<string>;
     setLightbarStatesJSON: (lightbarStatesJSON: string) => Promise<boolean>;
