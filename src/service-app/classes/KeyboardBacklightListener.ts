@@ -368,7 +368,7 @@ export class KeyboardBacklightListener {
             }
 
             if (this.ledsRGBZones?.length > 0) {
-                this.setBufferInput(this.ledsRGBZones[0], true);
+                await this.setBufferInput(this.ledsRGBZones[0], true);
             }
             for (let i: number = 0; i < this.ledsRGBZones?.length; ++i) {
                 if (this.ledsRGBZones[i]) {
@@ -387,7 +387,7 @@ export class KeyboardBacklightListener {
                 }
             }
             if (this.ledsRGBZones?.length > 0) {
-                this.setBufferInput(this.ledsRGBZones[0], false);
+                await this.setBufferInput(this.ledsRGBZones[0], false);
             }
         }
 
