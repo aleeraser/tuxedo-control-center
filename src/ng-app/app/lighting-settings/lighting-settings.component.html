@@ -55,6 +55,48 @@ along with TUXEDO Control Center.  If not, see <https://www.gnu.org/licenses/>.
                 </app-keyboard-visual>
             </div>
 
+            <!-- PER-KEY EDITOR (per-key RGB keyboards, zones > 4) -->
+            <div class="perkey-editor" *ngIf="isPerKey()">
+                <div class="perkey-toolbar">
+                    <button
+                        type="button"
+                        mat-stroked-button
+                        color="primary"
+                        [class.active]="pressMode"
+                        (click)="togglePressMode()">
+                        {{ pressMode ? 'Stop selecting' : 'Press a key to select' }}
+                    </button>
+                    <span class="perkey-selected" *ngIf="hasKeySelected()">Selected key: #{{ selectedKeyboardZones[0] }}</span>
+                    <button
+                        type="button"
+                        mat-stroked-button
+                        color="warn"
+                        *ngIf="hasKeySelected() && hasSelectedMapping()"
+                        (click)="reassignSelectedKey()">
+                        Re-assign this key
+                    </button>
+                    <span class="perkey-selected" *ngIf="!hasKeySelected() && pressMode">Press any key on the keyboard…</span>
+                    <span class="perkey-selected" *ngIf="!hasKeySelected() && !pressMode">Pick a color to paint the whole keyboard, or press a key to edit it.</span>
+                </div>
+
+                <div class="perkey-calibration" *ngIf="calibration">
+                    <p>
+                        This key isn't mapped yet. Watch the keyboard: when the key you pressed flashes red, click
+                        <strong>That's the key</strong>.
+                    </p>
+                    <div class="perkey-calibration-actions">
+                        <button type="button" mat-flat-button color="primary" (click)="confirmCalibration()">That's the key</button>
+                        <button type="button" mat-stroked-button (click)="advanceCalibration()">Next</button>
+                        <button type="button" mat-button (click)="cancelCalibration()">Cancel</button>
+                    </div>
+                </div>
+
+                <div class="perkey-bulk">
+                    <button type="button" mat-stroked-button (click)="fillAllKeys(getSelectedKeyboardColor())">Apply color to all keys</button>
+                    <button type="button" mat-stroked-button (click)="clearAllKeys()">Turn all keys off</button>
+                </div>
+            </div>
+
             <!-- KEYBOARD -->
             <p i18n="@@cLightingKeyboardSettingsLabel" class="sub-header" *ngIf="keyboardCapabilities.maxRed > 0 && keyboardCapabilities.maxGreen > 0 && keyboardCapabilities.maxBlue > 0">
                 Keyboard lighting

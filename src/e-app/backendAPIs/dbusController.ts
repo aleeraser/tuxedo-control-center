@@ -765,6 +765,108 @@ export class TccDBusController {
         }
     }
 
+    async getKeyboardBacklightCapabilitiesJSON(): Promise<string> {
+        return this.getKeyboardCapabilitiesJSON();
+    }
+
+    async getKeyboardBacklightStatesJSON(): Promise<string> {
+        return this.getKeyboardStatesJSON();
+    }
+
+    async setKeyboardBacklightStatesJSON(keyboardBacklightStatesJSON: string): Promise<boolean> {
+        return this.setKeyboardStatesJSON(keyboardBacklightStatesJSON);
+    }
+
+    async getKeyboardBacklightKeyMapJSON(): Promise<string> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.GetKeyboardBacklightKeyMapJSON();
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: getKeyboardBacklightKeyMapJSON failed => ${err?.text}`);
+                return undefined;
+            }
+
+            console.error(`dbusController: getKeyboardBacklightKeyMapJSON failed => ${err}`);
+            return undefined;
+        }
+    }
+
+    async consumeKeyboardBacklightKeyPressedJSON(): Promise<string> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.ConsumeKeyboardBacklightKeyPressedJSON();
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: consumeKeyboardBacklightKeyPressedJSON failed => ${err?.text}`);
+                return undefined;
+            }
+
+            console.error(`dbusController: consumeKeyboardBacklightKeyPressedJSON failed => ${err}`);
+            return undefined;
+        }
+    }
+
+    async setKeyboardBacklightKeyMapEntry(keycode: number, ledIndex: number): Promise<boolean> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.SetKeyboardBacklightKeyMapEntry(keycode, ledIndex);
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: setKeyboardBacklightKeyMapEntry failed => ${err?.text}`);
+                return false;
+            }
+
+            console.error(`dbusController: setKeyboardBacklightKeyMapEntry failed => ${err}`);
+            return false;
+        }
+    }
+
+    async flashKeyboardBacklightLed(ledIndex: number): Promise<boolean> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.FlashKeyboardBacklightLed(ledIndex);
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: flashKeyboardBacklightLed failed => ${err?.text}`);
+                return false;
+            }
+
+            console.error(`dbusController: flashKeyboardBacklightLed failed => ${err}`);
+            return false;
+        }
+    }
+
+    async highlightKeyboardBacklightLed(ledIndex: number, on: boolean): Promise<boolean> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.HighlightKeyboardBacklightLed(ledIndex, on);
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: highlightKeyboardBacklightLed failed => ${err?.text}`);
+                return false;
+            }
+
+            console.error(`dbusController: highlightKeyboardBacklightLed failed => ${err}`);
+            return false;
+        }
+    }
+
     async getLocalDimmingStateJSON(): Promise<string> {
         try {
             if (this.dbusStatus && this.interface) {

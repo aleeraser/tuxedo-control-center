@@ -23,6 +23,7 @@ import { ActivatedRoute } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 import { GridParamsSettings, type IGridParams } from '../../../common/models/IGridParams';
 import {
+    type KeyboardBacklightKeyMapInterface,
     type KeyboardCapabilitiesInterface,
     KeyboardColorModes,
     type KeyboardStateInterface,
@@ -34,6 +35,12 @@ import {
 import { ConfigService } from '../config.service';
 // biome-ignore lint: injection token
 import { TccDBusClientService } from '../tcc-dbus-client.service';
+
+interface ICalibrationState {
+    keycode: number;
+    candidates: number[];
+    pos: number;
+}
 
 @Component({
     selector: 'app-lighting-settings',
@@ -59,6 +66,12 @@ export class LightingComponent implements OnInit, OnDestroy {
     private lightbarColorHexPending: string = '#ffffff';
     private lightbarBrightnessPending: number = -1;
     public lightbarMaxBrightness: number = -1;
+
+    // Per-key selection support
+    public keyMap: KeyboardBacklightKeyMapInterface = {};
+    public pressMode: boolean = false;
+    private pressPollTimer: number | undefined;
+    public calibration: ICalibrationState | undefined;
 
     private keyboardColorPickerTimeout: NodeJS.Timeout | undefined;
     private keyboardBrightnessSliderTimeout: NodeJS.Timeout | undefined;
@@ -97,6 +110,13 @@ export class LightingComponent implements OnInit, OnDestroy {
             this.tccdbus.keyboardStates.subscribe((states: KeyboardStateInterface[]) =>
                 this.updateKeyboardStates(states),
             ),
+        );
+        this.subscriptions.add(
+            this.tccdbus.keyboardBacklightKeyMap.subscribe((map: KeyboardBacklightKeyMapInterface) => {
+                if (map) {
+                    this.keyMap = map;
+                }
+            }),
         );
         this.subscriptions.add(
             this.tccdbus.lightbarStates.subscribe((states: LightbarStateInterface) =>
@@ -409,6 +429,9 @@ export class LightingComponent implements OnInit, OnDestroy {
 
     public selectedKeyboardZonesChange(selectedKeyboardZones: number[]): void {
         this.selectedKeyboardZones = selectedKeyboardZones;
+        if (this.isPerKey() && selectedKeyboardZones.length === 1) {
+            this.tccdbus.flashKeyboardBacklightLed(selectedKeyboardZones[0]);
+        }
     }
 
     public onKeyboardColorPickerDragStart(zones: number[]): void {
@@ -419,7 +442,161 @@ export class LightingComponent implements OnInit, OnDestroy {
         this.triggerKeyboardColorTimeout(zones);
     }
 
+    // Per-key selection and calibration support
+
+    public isPerKey(): boolean {
+        return (this.keyboardCapabilities?.zones ?? 0) > 4;
+    }
+
+    public hasKeySelected(): boolean {
+        return this.selectedKeyboardZones.length === 1;
+    }
+
+    public togglePressMode(): void {
+        this.pressMode = !this.pressMode;
+        if (this.pressMode) {
+            this.startPressPolling();
+        } else {
+            this.stopPressPolling();
+            this.stopCalibration();
+        }
+    }
+
+    private startPressPolling(): void {
+        this.stopPressPolling();
+        this.pressPollTimer = window.setInterval(() => {
+            this.pollPressedKey();
+        }, 250);
+    }
+
+    private stopPressPolling(): void {
+        if (this.pressPollTimer !== undefined) {
+            clearInterval(this.pressPollTimer);
+            this.pressPollTimer = undefined;
+        }
+    }
+
+    private async pollPressedKey(): Promise<void> {
+        const keycode: number = await this.tccdbus.consumeKeyboardBacklightKeyPressed();
+        if (keycode === undefined) {
+            return;
+        }
+        this.handlePressedKey(keycode);
+    }
+
+    private handlePressedKey(keycode: number): void {
+        const mapped: number = this.keyMap?.[keycode];
+        if (mapped !== undefined) {
+            this.selectedKeyboardZones = [mapped];
+            this.tccdbus.flashKeyboardBacklightLed(mapped);
+            return;
+        }
+        this.startCalibration(keycode);
+    }
+
+    private startCalibration(keycode: number): void {
+        const zones: number = this.keyboardCapabilities?.zones ?? 0;
+        const mappedIndices: Set<number> = new Set<number>(Object.values(this.keyMap ?? {}));
+        const candidates: number[] = [];
+        for (let i = 0; i < zones; ++i) {
+            if (!mappedIndices.has(i)) {
+                candidates.push(i);
+            }
+        }
+        if (candidates.length === 0) {
+            return;
+        }
+        this.calibration = { keycode, candidates, pos: 0 };
+        this.highlightCalibrationCandidate();
+    }
+
+    private highlightCalibrationCandidate(): void {
+        if (!this.calibration) {
+            return;
+        }
+        this.tccdbus.highlightKeyboardBacklightLed(this.calibration.candidates[this.calibration.pos], true);
+    }
+
+    public advanceCalibration(): void {
+        if (!this.calibration) {
+            return;
+        }
+        this.tccdbus.highlightKeyboardBacklightLed(this.calibration.candidates[this.calibration.pos], false);
+        this.calibration.pos += 1;
+        if (this.calibration.pos >= this.calibration.candidates.length) {
+            this.calibration.pos = 0;
+        }
+        this.highlightCalibrationCandidate();
+    }
+
+    public confirmCalibration(): void {
+        if (!this.calibration) {
+            return;
+        }
+        const ledIndex: number = this.calibration.candidates[this.calibration.pos];
+        this.tccdbus.highlightKeyboardBacklightLed(ledIndex, false);
+        this.tccdbus.setKeyboardBacklightKeyMapEntry(this.calibration.keycode, ledIndex);
+        this.keyMap = { ...this.keyMap, [this.calibration.keycode]: ledIndex };
+        this.selectedKeyboardZones = [ledIndex];
+        this.stopCalibration();
+    }
+
+    public cancelCalibration(): void {
+        this.stopCalibration();
+    }
+
+    private stopCalibration(): void {
+        if (this.calibration) {
+            this.tccdbus.highlightKeyboardBacklightLed(this.calibration.candidates[this.calibration.pos], false);
+        }
+        this.calibration = undefined;
+    }
+
+    private invertKeyMap(ledIndex: number): number | undefined {
+        for (const key of Object.keys(this.keyMap ?? {})) {
+            if (this.keyMap[Number(key)] === ledIndex) {
+                return Number(key);
+            }
+        }
+        return undefined;
+    }
+
+    public hasSelectedMapping(): boolean {
+        if (!this.selectedKeyboardZones?.length) {
+            return false;
+        }
+        return this.invertKeyMap(this.selectedKeyboardZones[0]) !== undefined;
+    }
+
+    public reassignSelectedKey(): void {
+        if (!this.selectedKeyboardZones?.length) {
+            return;
+        }
+        const ledIndex: number = this.selectedKeyboardZones[0];
+        const keycode: number = this.invertKeyMap(ledIndex);
+        if (keycode === undefined) {
+            return;
+        }
+        this.tccdbus.setKeyboardBacklightKeyMapEntry(keycode, -1);
+        const updated: KeyboardBacklightKeyMapInterface = { ...this.keyMap };
+        delete updated[keycode];
+        this.keyMap = updated;
+        this.startCalibration(keycode);
+    }
+
+    public fillAllKeys(color: string): void {
+        const zones: number = this.keyboardCapabilities?.zones ?? 0;
+        this.keyboardColorHex = Array.from({ length: zones }, () => color);
+        this.setKeyboardStates(this.fillKeyboardStatesFromValues(this.keyboardBrightness, this.keyboardColorHex));
+    }
+
+    public clearAllKeys(): void {
+        this.fillAllKeys('#000000');
+    }
+
     public ngOnDestroy(): void {
+        this.stopPressPolling();
+        this.stopCalibration();
         this.subscriptions.unsubscribe();
     }
 }

@@ -67,6 +67,11 @@ export interface LightbarStateInterface {
     blue: number;
 }
 
+// Maps a Linux input keycode (input-event-codes.h KEY_*) to a per-key LED index (0..zones-1).
+export interface KeyboardBacklightKeyMapInterface {
+    [keycode: number]: number;
+}
+
 export interface LocalDimmingStateInterface {
     supported: boolean;
     enabled: boolean;
@@ -75,6 +80,12 @@ export interface LocalDimmingStateInterface {
 export const defaultLocalDimmingState: LocalDimmingStateInterface = {
     supported: false,
     enabled: false,
+};
+
+export {
+    KeyboardCapabilitiesInterface as KeyboardBacklightCapabilitiesInterface,
+    KeyboardStateInterface as KeyboardBacklightStateInterface,
+    KeyboardColorModes as KeyboardBacklightColorModes,
 };
 
 export interface ITccSettings {
@@ -92,6 +103,7 @@ export interface ITccSettings {
     chargingPriority: string | null;
     keyboardBacklightStates?: KeyboardStateInterface[];
     keyboardStates: KeyboardStateInterface[];
+    keyboardBacklightKeyMap?: KeyboardBacklightKeyMapInterface;
     lightbarStates: LightbarStateInterface | null;
 }
 
@@ -109,6 +121,7 @@ export const defaultSettings: ITccSettings = {
     chargingProfile: null,
     chargingPriority: null,
     keyboardStates: [],
+    keyboardBacklightKeyMap: {},
     lightbarStates: null,
 };
 
@@ -126,6 +139,7 @@ export const defaultSettingsXP1508UHD: ITccSettings = {
     chargingProfile: null,
     chargingPriority: null,
     keyboardStates: [],
+    keyboardBacklightKeyMap: {},
     lightbarStates: null,
 };
 
@@ -143,6 +157,7 @@ const defaultSettingsMobile: ITccSettings = {
     chargingProfile: null,
     chargingPriority: null,
     keyboardStates: [],
+    keyboardBacklightKeyMap: {},
     lightbarStates: null,
 };
 

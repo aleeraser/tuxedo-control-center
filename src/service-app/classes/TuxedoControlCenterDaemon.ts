@@ -70,6 +70,7 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
     public activeProfile: ITccProfile;
 
     private workers: DaemonWorker[] = [];
+    private lightingListener: LightingListener;
     private listeners: (LightingListener | LocalDimmingListener | NVIDIAPowerCTRLListener)[] = [];
 
     protected started: boolean = false;
@@ -127,7 +128,8 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
         this.workers.push(new ODMPowerLimitWorker(this));
         this.workers.push(this.displayWorker); // todo: why not "new DisplayRefreshRateWorker(this)"?
 
-        this.listeners.push(new LightingListener(this));
+        this.lightingListener = new LightingListener(this);
+        this.listeners.push(this.lightingListener);
         this.listeners.push(new LocalDimmingListener(this));
         this.listeners.push(new NVIDIAPowerCTRLListener(this));
 
@@ -175,6 +177,18 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
         return this.chargingWorker;
     }
 
+    public setKeyboardBacklightKeyMapEntry(keycode: number, ledIndex: number): boolean {
+        return this.lightingListener?.setKeyMapEntry(keycode, ledIndex) ?? false;
+    }
+
+    public flashKeyboardBacklightLed(ledIndex: number): boolean {
+        return this.lightingListener?.flashLed(ledIndex) ?? false;
+    }
+
+    public highlightKeyboardBacklightLed(ledIndex: number, on: boolean): boolean {
+        return this.lightingListener?.highlightLed(ledIndex, on) ?? false;
+    }
+
     public async catchError(err: Error): Promise<void> {
         this.logLine('Tccd Exception');
         const errorLine: string = `${err.name}: ${err.message}`;
@@ -198,6 +212,16 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
                 await worker.exit();
             } catch (err: unknown) {
                 console.error(`TuxedoControlCenterDaemon: Failed executing onExit() => ${err}`);
+            }
+        }
+
+        for (const listener of this.listeners) {
+            try {
+                if ('exit' in listener && typeof (listener as any).exit === 'function') {
+                    await (listener as any).exit();
+                }
+            } catch (err: unknown) {
+                console.error(`TuxedoControlCenterDaemon: Failed executing listener onExit() => ${err}`);
             }
         }
 

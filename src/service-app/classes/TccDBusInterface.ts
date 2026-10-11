@@ -62,6 +62,8 @@ export class TccDBusData {
     public lightbarStatesJSON: string = '{}';
     public keyboardStatesPendingJSON: BehaviorSubject<string> = new BehaviorSubject<string>(undefined);
     public lightbarStatesPendingJSON: BehaviorSubject<string> = new BehaviorSubject<string>(undefined);
+    public keyboardKeyMapJSON: string = '{}';
+    public keyboardKeyPressedJSON: string = '';
     public localDimmingStateJSON: string = '{}';
     public localDimmingEnabledNewJSON: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(undefined);
     public fansMinSpeed: number = -1;
@@ -77,6 +79,9 @@ export class TccDBusData {
 export class TccDBusOptions {
     public triggerStateCheck?: () => Promise<void>;
     public chargingWorker?: ChargingWorker;
+    public setKeyboardBacklightKeyMapEntry?: (keycode: number, ledIndex: number) => boolean;
+    public flashKeyboardBacklightLed?: (ledIndex: number) => boolean;
+    public highlightKeyboardBacklightLed?: (ledIndex: number, on: boolean) => boolean;
 }
 
 export class TccDBusInterface extends dbus.interface.Interface {
@@ -311,6 +316,42 @@ export class TccDBusInterface extends dbus.interface.Interface {
     }
 
     // biome-ignore lint: function is never read because of dbus
+    private GetKeyboardBacklightKeyMapJSON(): string {
+        return this.data.keyboardKeyMapJSON;
+    }
+
+    // biome-ignore lint: function is never read because of dbus
+    private ConsumeKeyboardBacklightKeyPressedJSON(): string {
+        const pressed: string = this.data.keyboardKeyPressedJSON;
+        this.data.keyboardKeyPressedJSON = '';
+        return pressed;
+    }
+
+    // biome-ignore lint: function is never read because of dbus
+    private SetKeyboardBacklightKeyMapEntry(keycode: number, ledIndex: number): boolean {
+        if (this.interfaceOptions.setKeyboardBacklightKeyMapEntry === undefined) {
+            return false;
+        }
+        return this.interfaceOptions.setKeyboardBacklightKeyMapEntry(keycode, ledIndex);
+    }
+
+    // biome-ignore lint: function is never read because of dbus
+    private FlashKeyboardBacklightLed(ledIndex: number): boolean {
+        if (this.interfaceOptions.flashKeyboardBacklightLed === undefined) {
+            return false;
+        }
+        return this.interfaceOptions.flashKeyboardBacklightLed(ledIndex);
+    }
+
+    // biome-ignore lint: function is never read because of dbus
+    private HighlightKeyboardBacklightLed(ledIndex: number, on: boolean): boolean {
+        if (this.interfaceOptions.highlightKeyboardBacklightLed === undefined) {
+            return false;
+        }
+        return this.interfaceOptions.highlightKeyboardBacklightLed(ledIndex, on);
+    }
+
+    // biome-ignore lint: function is never read because of dbus
     private GetLocalDimmingStateJSON(): string {
         return this.data.localDimmingStateJSON;
     }
@@ -483,6 +524,11 @@ TccDBusInterface.configureMembers({
         GetLightbarStatesJSON: { outSignature: 's' },
         SetKeyboardStatesJSON: { inSignature: 's', outSignature: 'b' },
         SetLightbarStatesJSON: { inSignature: 's', outSignature: 'b' },
+        GetKeyboardBacklightKeyMapJSON: { outSignature: 's' },
+        ConsumeKeyboardBacklightKeyPressedJSON: { outSignature: 's' },
+        SetKeyboardBacklightKeyMapEntry: { inSignature: 'ii', outSignature: 'b' },
+        FlashKeyboardBacklightLed: { inSignature: 'i', outSignature: 'b' },
+        HighlightKeyboardBacklightLed: { inSignature: 'ib', outSignature: 'b' },
         GetLocalDimmingStateJSON: { outSignature: 's' },
         SetLocalDimmingEnabled: { inSignature: 'b', outSignature: 'b' },
         GetFansMinSpeed: { outSignature: 'i' },

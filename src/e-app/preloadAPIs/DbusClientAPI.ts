@@ -61,6 +61,29 @@ export const DbusClientAPI = {
         ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.setKeyboardStatesJSON, keyboardStatesJSON]),
     setLightbarStatesJSON: (lightbarStatesJSON: string): Promise<boolean> =>
         ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.setLightbarStatesJSON, lightbarStatesJSON]),
+    getKeyboardBacklightCapabilitiesJSON: (): Promise<string> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getKeyboardCapabilitiesJSON]),
+    getKeyboardBacklightStatesJSON: (): Promise<string> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getKeyboardStatesJSON]),
+    setKeyboardBacklightStatesJSON: (keyboardBacklightStatesJSON: string): Promise<boolean> =>
+        ipcRenderer.invoke(dbusAPIHandle, [
+            DbusAPIFunctions.setKeyboardStatesJSON,
+            keyboardBacklightStatesJSON,
+        ]),
+    getKeyboardBacklightKeyMapJSON: (): Promise<string> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getKeyboardBacklightKeyMapJSON]),
+    consumeKeyboardBacklightKeyPressedJSON: (): Promise<string> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.consumeKeyboardBacklightKeyPressedJSON]),
+    setKeyboardBacklightKeyMapEntry: (keycode: number, ledIndex: number): Promise<boolean> =>
+        ipcRenderer.invoke(dbusAPIHandle, [
+            DbusAPIFunctions.setKeyboardBacklightKeyMapEntry,
+            keycode,
+            ledIndex,
+        ]),
+    flashKeyboardBacklightLed: (ledIndex: number): Promise<boolean> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.flashKeyboardBacklightLed, ledIndex]),
+    highlightKeyboardBacklightLed: (ledIndex: number, on: boolean): Promise<boolean> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.highlightKeyboardBacklightLed, ledIndex, on]),
     getLocalDimmingStateJSON: (): Promise<string> =>
         ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getLocalDimmingStateJSON]),
     setLocalDimmingEnabled: (localDimmingEnabled: boolean): Promise<boolean> =>
@@ -149,6 +172,14 @@ export interface IDbusClientAPI {
     getLightbarStatesJSON: () => Promise<string>;
     setKeyboardStatesJSON: (keyboardStatesJSON: string) => Promise<boolean>;
     setLightbarStatesJSON: (lightbarStatesJSON: string) => Promise<boolean>;
+    getKeyboardBacklightCapabilitiesJSON?: () => Promise<string>;
+    getKeyboardBacklightStatesJSON?: () => Promise<string>;
+    setKeyboardBacklightStatesJSON?: (keyboardBacklightStatesJSON: string) => Promise<boolean>;
+    getKeyboardBacklightKeyMapJSON: () => Promise<string>;
+    consumeKeyboardBacklightKeyPressedJSON: () => Promise<string>;
+    setKeyboardBacklightKeyMapEntry: (keycode: number, ledIndex: number) => Promise<boolean>;
+    flashKeyboardBacklightLed: (ledIndex: number) => Promise<boolean>;
+    highlightKeyboardBacklightLed: (ledIndex: number, on: boolean) => Promise<boolean>;
     getLocalDimmingStateJSON: () => Promise<string>;
     setLocalDimmingEnabled: (localDimmingEnabled: boolean) => Promise<boolean>;
     getFansMinSpeed: () => Promise<number>;
