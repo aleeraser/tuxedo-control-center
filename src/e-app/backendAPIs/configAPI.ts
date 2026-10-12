@@ -17,8 +17,10 @@
  * along with TUXEDO Control Center.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import type { IpcMainEvent, IpcMainInvokeEvent } from 'electron';
-import { ipcMain } from 'electron';
+import { app, ipcMain } from 'electron';
 import { ConfigHandler } from '../../common/classes/ConfigHandler';
 import { TccPaths } from '../../common/classes/TccPaths';
 import type { ITccProfile } from '../../common/models/TccProfile';
@@ -33,6 +35,24 @@ const config: ConfigHandler = new ConfigHandler(
     TccPaths.FANTABLES_FILE,
 );
 
+function syncRepoProfiles(profiles: ITccProfile[]): void {
+    try {
+        const candidates = [
+            path.resolve(app.getAppPath(), '../../profiles-recoil16.json'),
+            path.resolve(__dirname, '../../../../../profiles-recoil16.json'),
+            path.join(process.env.HOME || '', 'git/tuxedo/tuxedo-control-center/profiles-recoil16.json'),
+        ];
+        for (const candidate of candidates) {
+            if (fs.existsSync(candidate)) {
+                fs.writeFileSync(candidate, `${JSON.stringify(profiles, null, 2)}\n`, 'utf8');
+                break;
+            }
+        }
+    } catch (err: unknown) {
+        console.error(`configAPI: syncRepoProfiles failed => ${err}`);
+    }
+}
+
 async function pkexecWriteCustomProfilesAsync(newProfileList: ITccProfile[]): Promise<boolean> {
     const tmpProfilesPath: string = '/tmp/tmptccprofiles';
     config.writeProfiles(newProfileList, tmpProfilesPath);
@@ -40,6 +60,7 @@ async function pkexecWriteCustomProfilesAsync(newProfileList: ITccProfile[]): Pr
 
     try {
         await execFile(`pkexec ${tccdExec} --new_profiles ${tmpProfilesPath}`);
+        syncRepoProfiles(newProfileList);
         return true;
     } catch (err: unknown) {
         console.error(`configAPI: pkexecWriteCustomProfilesAsync failed => ${err}`);
@@ -54,6 +75,7 @@ function pkexecWriteCustomProfiles(profiles: ITccProfile[]): boolean {
     // https://stackoverflow.com/questions/57484453/how-to-get-err-stderr-from-execsync
     try {
         execFileSync(`pkexec ${tccdExec} --new_profiles ${tmpProfilesPath}`);
+        syncRepoProfiles(profiles);
         return true;
     } catch (err: unknown) {
         console.error(`configAPI: pkexecWriteCustomProfiles failed => ${err}`);
@@ -75,6 +97,7 @@ async function pkexecWriteConfigAsync(settings: ITccSettings, profiles: ITccProf
                     if (data.error) {
                         resolve(false);
                     } else {
+                        syncRepoProfiles(profiles);
                         resolve(true);
                     }
                 })
