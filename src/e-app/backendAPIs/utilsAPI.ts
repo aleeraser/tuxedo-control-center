@@ -26,9 +26,25 @@ import type { OpenDialogReturnValue, SaveDialogReturnValue } from 'electron/main
 import { tccWindow } from './browserWindowsAPI';
 import { translation, updateTrayProfiles, userConfig, watchOption } from './initMain';
 import { systemInfosURL } from './systemInfosAPI';
+import { TccPaths } from '../../common/classes/TccPaths';
 
 export const cwd: string = process.cwd();
 export const environmentIsProduction: boolean = app.isPackaged;
+
+export function getTccdExec(): string {
+    if (fs.existsSync(TccPaths.TCCD_EXEC_FILE)) {
+        return TccPaths.TCCD_EXEC_FILE;
+    }
+    const appDataTccd = path.join(app.getAppPath(), 'data/service/tccd');
+    if (fs.existsSync(appDataTccd)) {
+        return appDataTccd;
+    }
+    const repoTccd = path.resolve(__dirname, '../../data/service/tccd');
+    if (fs.existsSync(repoTccd)) {
+        return repoTccd;
+    }
+    return `${cwd}/dist/tuxedo-control-center/data/service/tccd`;
+}
 
 ipcMain.handle(
     'fs-write-text-file',
