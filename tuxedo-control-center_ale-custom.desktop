@@ -2,6 +2,7 @@
 Name=TUXEDO Control Center
 Comment=An application helping you to tune your TUXEDO
 Exec=/home/alessandro/git/tuxedo/tuxedo-control-center/node_modules/electron/dist/electron /home/alessandro/git/tuxedo/tuxedo-control-center/dist/tuxedo-control-center
+Path=/home/alessandro/git/tuxedo/tuxedo-control-center
 Terminal=false
 Type=Application
 Icon=/opt/tuxedo-control-center/resources/dist/tuxedo-control-center/data/dist-data/tuxedo-control-center_256.svg
