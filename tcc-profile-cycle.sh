@@ -47,7 +47,7 @@ case "$NEXT_PROFILE_ID" in
     ;;
   "low_power_custom_profile")
     TITLE="🌱 Low Power"
-    DESC="PL1: 45W · PL2: 45W · Quiet Fan"
+    DESC="PL1: 15W · PL2: 15W · Quiet Fan"
     ICON="power-profile-power-saver"
     ;;
   *)
