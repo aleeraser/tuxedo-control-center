@@ -364,9 +364,9 @@
     },
     "odmPowerLimits": {
       "tdpValues": [
-        45,
-        45,
-        60
+        15,
+        15,
+        30
       ]
     },
     "nvidiaPowerCTRLProfile": {
