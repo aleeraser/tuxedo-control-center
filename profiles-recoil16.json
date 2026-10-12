@@ -365,7 +365,7 @@
     "odmPowerLimits": {
       "tdpValues": [
         15,
-        15,
+        20,
         30
       ]
     },
