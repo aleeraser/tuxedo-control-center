@@ -18,13 +18,16 @@
  */
 
 import * as child_process from 'node:child_process';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { app } from 'electron';
 import { ConfigHandler } from '../../common/classes/ConfigHandler';
 import { TccPaths } from '../../common/classes/TccPaths';
 import { WebcamAPIFunctions } from '../../common/models/IWebcamAPI';
 import type { WebcamConstraints, WebcamPreset } from '../../common/models/TccWebcamSettings';
 import { clearWebcamWindow, createWebcamPreview, tccWindow, webcamWindow } from './browserWindowsAPI';
 import { userConfig } from './initMain';
-import { cwd, environmentIsProduction, execCmd, execFile } from './utilsAPI';
+import { cwd, execCmd, execFile, getTccdExec } from './utilsAPI';
 
 const webcamConfigHandler: ConfigHandler = new ConfigHandler(
     TccPaths.SETTINGS_FILE,
@@ -35,13 +38,14 @@ const webcamConfigHandler: ConfigHandler = new ConfigHandler(
 );
 
 function getWebcamCtrlPythonPath(): string {
-    let webcamCtrolsPath: string;
-    if (environmentIsProduction) {
-        webcamCtrolsPath = TccPaths.TCCD_PYTHON_CAMERACTRL_FILE;
-    } else {
-        webcamCtrolsPath = `${cwd}/src/cameractrls/cameractrls.py`;
+    if (fs.existsSync(TccPaths.TCCD_PYTHON_CAMERACTRL_FILE)) {
+        return TccPaths.TCCD_PYTHON_CAMERACTRL_FILE;
     }
-    return webcamCtrolsPath;
+    const repoPath: string = path.resolve(app.getAppPath(), '../src/cameractrls/cameractrls.py');
+    if (fs.existsSync(repoPath)) {
+        return repoPath;
+    }
+    return `${cwd}/src/cameractrls/cameractrls.py`;
 }
 
 export const webcamHandlers: Map<string, (...args: any[]) => any> = new Map<string, (...args: any[]) => any>()
@@ -149,12 +153,7 @@ export const webcamHandlers: Map<string, (...args: any[]) => any> = new Map<stri
         return new Promise<boolean>((resolve: (value: boolean | PromiseLike<boolean>) => void): void => {
             const tmpWebcamPath: string = '/tmp/tmptccwebcam';
             webcamConfigHandler.writeWebcamSettings(webcamSettings, tmpWebcamPath);
-            let tccdExec: string;
-            if (environmentIsProduction) {
-                tccdExec = TccPaths.TCCD_EXEC_FILE;
-            } else {
-                tccdExec = `${cwd}/dist/tuxedo-control-center/data/service/tccd`;
-            }
+            const tccdExec: string = getTccdExec();
             child_process.exec(
                 `pkexec ${tccdExec} --new_webcam ${tmpWebcamPath}`,
                 (err: unknown, _stdout: string, _stderr: string): void => {

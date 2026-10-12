@@ -23,7 +23,7 @@ import { ConfigHandler } from '../../common/classes/ConfigHandler';
 import { TccPaths } from '../../common/classes/TccPaths';
 import type { ITccProfile } from '../../common/models/TccProfile';
 import type { ITccSettings } from '../../common/models/TccSettings';
-import { cwd, environmentIsProduction, execFile, execFileSync } from './utilsAPI';
+import { execFile, execFileSync, getTccdExec } from './utilsAPI';
 
 const config: ConfigHandler = new ConfigHandler(
     TccPaths.SETTINGS_FILE,
@@ -36,12 +36,7 @@ const config: ConfigHandler = new ConfigHandler(
 async function pkexecWriteCustomProfilesAsync(newProfileList: ITccProfile[]): Promise<boolean> {
     const tmpProfilesPath: string = '/tmp/tmptccprofiles';
     config.writeProfiles(newProfileList, tmpProfilesPath);
-    let tccdExec: string;
-    if (environmentIsProduction) {
-        tccdExec = TccPaths.TCCD_EXEC_FILE;
-    } else {
-        tccdExec = `${cwd}/dist/tuxedo-control-center/data/service/tccd`;
-    }
+    const tccdExec: string = getTccdExec();
 
     try {
         await execFile(`pkexec ${tccdExec} --new_profiles ${tmpProfilesPath}`);
@@ -55,12 +50,7 @@ async function pkexecWriteCustomProfilesAsync(newProfileList: ITccProfile[]): Pr
 function pkexecWriteCustomProfiles(profiles: ITccProfile[]): boolean {
     const tmpProfilesPath = '/tmp/tmptccprofiles';
     config.writeProfiles(profiles, tmpProfilesPath);
-    let tccdExec: string;
-    if (environmentIsProduction) {
-        tccdExec = TccPaths.TCCD_EXEC_FILE;
-    } else {
-        tccdExec = `${cwd}/dist/tuxedo-control-center/data/service/tccd`;
-    }
+    const tccdExec: string = getTccdExec();
     // https://stackoverflow.com/questions/57484453/how-to-get-err-stderr-from-execsync
     try {
         execFileSync(`pkexec ${tccdExec} --new_profiles ${tmpProfilesPath}`);
@@ -76,13 +66,7 @@ async function pkexecWriteConfigAsync(settings: ITccSettings, profiles: ITccProf
     const tmpSettingsPath = '/tmp/tmptccsettings';
     config.writeProfiles(profiles, tmpProfilesPath);
     config.writeSettings(settings, tmpSettingsPath);
-    let tccdExec: string;
-
-    if (environmentIsProduction) {
-        tccdExec = TccPaths.TCCD_EXEC_FILE;
-    } else {
-        tccdExec = `${cwd}/dist/tuxedo-control-center/data/service/tccd`;
-    }
+    const tccdExec: string = getTccdExec();
 
     return new Promise<boolean>(
         (resolve: (value: boolean | PromiseLike<boolean>) => void, _reject: (reason?: unknown) => void): void => {
@@ -111,13 +95,7 @@ ipcMain.on(
         newSettings.stateMap[stateId] = profileId;
         const tmpSettingsPath = '/tmp/tmptccsettings';
         config.writeSettings(newSettings, tmpSettingsPath);
-        let tccdExec: string;
-
-        if (environmentIsProduction) {
-            tccdExec = TccPaths.TCCD_EXEC_FILE;
-        } else {
-            tccdExec = `${cwd}/dist/tuxedo-control-center/data/service/tccd`;
-        }
+        const tccdExec: string = getTccdExec();
         // todo: error handling
         execFile(`pkexec ${tccdExec} --new_settings ${tmpSettingsPath}`);
     },
