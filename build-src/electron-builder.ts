@@ -98,7 +98,6 @@ async function buildDeb(filenameAddition: string): Promise<void> {
             category: desktopFileCategories,
             icon: `${distSrc}/data/dist-data/tuxedo-control-center_256.svg`,
             desktop: linuxDesktopFile,
-            syncDesktopName: true,
         },
         deb: {
             compression: 'xz',
@@ -160,7 +159,6 @@ async function buildRpm(filenameAddition: string): Promise<void> {
             category: desktopFileCategories,
             icon: `${distSrc}/data/dist-data/tuxedo-control-center_256.svg`,
             desktop: linuxDesktopFile,
-            syncDesktopName: true,
         },
         rpm: {
             compression: 'xz',
