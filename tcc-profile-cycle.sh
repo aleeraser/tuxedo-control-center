@@ -33,6 +33,13 @@ NEXT_PROFILE_ID="${CYCLE_PROFILES[$NEXT_INDEX]}"
 # Apply the new profile
 dbus-send --system --print-reply --dest=com.tuxedocomputers.tccd /com/tuxedocomputers/tccd com.tuxedocomputers.tccd.SetTempProfileById string:"$NEXT_PROFILE_ID" > /dev/null
 
+# Trigger power optimization hook asynchronously for instant transition
+if [[ "$NEXT_PROFILE_ID" == "low_power_custom_profile" ]]; then
+  ~/.local/bin/tcc-power-hook --low >/dev/null 2>&1 &
+else
+  ~/.local/bin/tcc-power-hook --restore >/dev/null 2>&1 &
+fi
+
 # Display on-screen OSD notification
 case "$NEXT_PROFILE_ID" in
   "max_power_custom_profile")
