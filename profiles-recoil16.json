@@ -4,7 +4,7 @@
     "description": "Enable max power",
     "display": {
       "brightness": 100,
-      "useBrightness": true,
+      "useBrightness": false,
       "refreshRate": null,
       "useRefRate": false,
       "xResolution": -1,
