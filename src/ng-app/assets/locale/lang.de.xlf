@@ -3911,6 +3911,14 @@ Handelsregisternummer HRB 27755
         <source>Note: The driver turns local dimming off on every boot. This switch is not persisted, it always reflects the current state.</source>
         <target state="translated">Hinweis: Der Treiber schaltet Local Dimming bei jedem Neustart aus. Dieser Schalter wird nicht dauerhaft gespeichert, sondern spiegelt den aktuellen Zustand wider.</target>
       </trans-unit>
+      <trans-unit id="menuHdmiControl" datatype="html">
+        <source>HDMI Port &amp; GPU Display</source>
+        <target state="translated">HDMI-Anschluss &amp; GPU-Anzeige</target>
+      </trans-unit>
+      <trans-unit id="cHdmiControlLabel" datatype="html">
+        <source>HDMI Port &amp; Discrete GPU Display</source>
+        <target state="translated">HDMI-Anschluss &amp; dedizierte GPU-Anzeige</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -74,6 +74,20 @@ along with TUXEDO Control Center.  If not, see <https://www.gnu.org/licenses/>.
         <div class="content"></div>
     </mat-expansion-panel>
 
+    <mat-expansion-panel (click)="gotoComponent('hdmi-control')" hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <mat-icon>
+                    <svg viewBox="0 0 512 512">
+                        <use href="./assets/images/icon_hdmi.svg#Icon"></use>
+                    </svg>
+                </mat-icon>
+                <div i18n="@@menuHdmiControl" class="panel-title">HDMI Port & GPU Display</div>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="content"></div>
+    </mat-expansion-panel>
+
     <mat-expansion-panel (click)="gotoComponent('camera-settings')" hideToggle>
         <mat-expansion-panel-header>
             <mat-panel-title>

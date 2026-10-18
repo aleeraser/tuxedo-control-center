@@ -1,0 +1,100 @@
+<div class="backlight-settings-edit">
+    <mat-card class="tcc-card card-hdmi-control inner-backlight-settings-edit">
+        <div class="tcc-options-group">
+            <div class="title-row title-row-margin">
+                <hr />
+                <div class="title">
+                    <svg viewBox="0 0 512 512" class="tcc-icons">
+                        <use href="./assets/images/icon_hdmi.svg#Icon"></use>
+                    </svg>
+                    <span i18n="@@cHdmiControlLabel">HDMI Port & Discrete GPU Display</span>
+                </div>
+                <hr />
+            </div>
+        </div>
+
+        <div class="hdmi-content content resize-text" *ngIf="!isSupported()">
+            <p>
+                No discrete NVIDIA GPU with external display outputs was detected on this system.
+            </p>
+        </div>
+
+        <div class="hdmi-content content" *ngIf="isSupported()">
+            <mat-grid-list [cols]="20" rowHeight="45px" class="hdmi-grid">
+                <mat-grid-tile [colspan]="14">
+                    <div class="toggle-label-group">
+                        <header>Enable HDMI Port</header>
+                        <div class="subtext">
+                            Enables the physical HDMI port via NVIDIA dGPU for external monitors.
+                        </div>
+                    </div>
+                </mat-grid-tile>
+                <mat-grid-tile class="input-tile" [colspan]="6">
+                    <div class="align-toggle-components">
+                        <mat-slide-toggle
+                            color="primary"
+                            [checked]="chosenEnabled"
+                            (change)="onToggleChange($event.checked)"></mat-slide-toggle>
+                    </div>
+                </mat-grid-tile>
+            </mat-grid-list>
+
+            <div class="status-box">
+                <div class="status-header">Current Status</div>
+                <div class="status-row">
+                    <span class="status-label">Configured Mode:</span>
+                    <span class="status-badge" [ngClass]="chosenEnabled ? 'badge-enabled' : 'badge-saving'">
+                        {{ chosenEnabled ? 'HDMI Enabled (Multi-GPU Mode)' : 'Power Saving (HDMI Disabled)' }}
+                    </span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Mutter Udev Rule:</span>
+                    <span class="status-value">
+                        {{ hdmiState?.ruleInstalled ? 'Installed (/etc/udev/rules.d/61-mutter-device-ignore.rules)' : 'Not installed (GPU unignored)' }}
+                    </span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Active Desktop Session:</span>
+                    <span class="status-value">
+                        {{ hdmiState?.sessionActive ? 'Discrete GPU active in display server' : 'Discrete GPU ignored (deep sleep ready)' }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="alert-box alert-warning" *ngIf="isRestartRequired()">
+                <mat-icon class="alert-icon">warning</mat-icon>
+                <div class="alert-content">
+                    <div class="alert-text">
+                        <strong>PC Restart Required:</strong> The configuration has been updated, but the active display session has not applied it yet. Because GDM and GNOME Wayland only initialize or release KMS display devices during boot, please <strong>restart your computer</strong> for changes to take effect.
+                    </div>
+                    <button type="button" mat-flat-button color="warn" class="restart-button" (click)="rebootSystem()">
+                        <mat-icon>restart_alt</mat-icon>
+                        Restart PC Now
+                    </button>
+                </div>
+            </div>
+
+            <div class="alert-box alert-success" *ngIf="!isRestartRequired()">
+                <mat-icon class="alert-icon">check_circle</mat-icon>
+                <div class="alert-text">
+                    In sync: Active display session matches configured mode.
+                </div>
+            </div>
+
+            <div class="notes-section">
+                <p class="note">
+                    <strong>Why restart instead of logout?</strong> GNOME Display Manager (GDM) starts at boot before any user logs in. When you log out, GDM keeps running in the background with its existing display server handles. A system restart is required for GDM and Mutter to parse updated udev rules and re-enumerate GPU display controllers.
+                </p>
+                <p class="note">
+                    <strong>Power Impact:</strong> When HDMI is enabled and driving an external monitor, the NVIDIA discrete GPU will stay awake in D0 mode (~10–15W base draw). Turning this off allows the dGPU to enter deep Runtime D3cold sleep (0W) on battery.
+                </p>
+                <p class="note">
+                    <strong>Compute & AI:</strong> Even when HDMI is disabled for power saving, CUDA, PyTorch, Ollama, Strata, and on-demand GPU offload (switcheroo-control / PRIME) continue to work normally.
+                </p>
+                <p class="note">
+                    <strong>Thunderbolt / USB-C:</strong> Type-C DisplayPort outputs are wired directly to the Intel integrated GPU and work at all times regardless of this setting.
+                </p>
+            </div>
+        </div>
+    </mat-card>
+</div>

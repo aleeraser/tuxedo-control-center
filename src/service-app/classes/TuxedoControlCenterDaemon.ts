@@ -41,6 +41,7 @@ import { FanControlWorker } from './FanControlWorker';
 import { GpuInfoWorker } from './GpuInfoWorker';
 import { LightingListener } from './LightingListener';
 import { LocalDimmingListener } from './LocalDimmingListener';
+import { HdmiControlListener } from './HdmiControlListener';
 import { NVIDIAPowerCTRLListener } from './NVIDIAPowerCTRLListener';
 import { ODMPowerLimitWorker } from './ODMPowerLimitWorker';
 import { ODMProfileWorker } from './ODMProfileWorker';
@@ -71,7 +72,7 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
 
     private workers: DaemonWorker[] = [];
     private lightingListener: LightingListener;
-    private listeners: (LightingListener | LocalDimmingListener | NVIDIAPowerCTRLListener)[] = [];
+    private listeners: (LightingListener | LocalDimmingListener | HdmiControlListener | NVIDIAPowerCTRLListener)[] = [];
 
     protected started: boolean = false;
 
@@ -131,6 +132,7 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
         this.lightingListener = new LightingListener(this);
         this.listeners.push(this.lightingListener);
         this.listeners.push(new LocalDimmingListener(this));
+        this.listeners.push(new HdmiControlListener(this));
         this.listeners.push(new NVIDIAPowerCTRLListener(this));
 
         await this.startWorkers();
@@ -718,7 +720,7 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
             this.activeProfile = this.getDefaultProfile();
             result = false;
         }
-        this.listeners.forEach((listener: LightingListener | LocalDimmingListener | NVIDIAPowerCTRLListener): void => {
+        this.listeners.forEach((listener: LightingListener | LocalDimmingListener | HdmiControlListener | NVIDIAPowerCTRLListener): void => {
             listener.onActiveProfileChanged();
         });
         return result;
@@ -731,7 +733,7 @@ export class TuxedoControlCenterDaemon extends SingleProcess {
             this.activeProfile = this.getDefaultProfile();
             result = false;
         }
-        this.listeners.forEach((listener: LightingListener | LocalDimmingListener | NVIDIAPowerCTRLListener): void => {
+        this.listeners.forEach((listener: LightingListener | LocalDimmingListener | HdmiControlListener | NVIDIAPowerCTRLListener): void => {
             listener.onActiveProfileChanged();
         });
         return result;

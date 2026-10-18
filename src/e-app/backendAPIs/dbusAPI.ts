@@ -366,6 +366,30 @@ export const dbusHandlers: Map<string, (...args: any[]) => any> = new Map<string
         );
     })
 
+    .set(DbusAPIFunctions.getHdmiControlStateJSON, (): Promise<string> => {
+        return new Promise<string>(
+            (resolve: (value: string | PromiseLike<string>) => void, _reject: (reason?: unknown) => void): void => {
+                try {
+                    resolve(tccDBus.getHdmiControlStateJSON());
+                } catch (err: unknown) {
+                    console.error(`dbusAPI: getHdmiControlStateJSON failed => ${err}`);
+                }
+            },
+        );
+    })
+
+    .set(DbusAPIFunctions.setHdmiControlEnabled, (enabled: boolean): Promise<boolean> => {
+        return new Promise<boolean>(
+            (resolve: (value: boolean | PromiseLike<boolean>) => void, _reject: (reason?: unknown) => void): void => {
+                try {
+                    resolve(tccDBus.setHdmiControlEnabled(enabled));
+                } catch (err: unknown) {
+                    console.error(`dbusAPI: setHdmiControlEnabled failed => ${err}`);
+                }
+            },
+        );
+    })
+
     .set(DbusAPIFunctions.getFansMinSpeed, (): Promise<number> => {
         return new Promise<number>(
             (resolve: (value: number | PromiseLike<number>) => void, _reject: (reason?: unknown) => void): void => {

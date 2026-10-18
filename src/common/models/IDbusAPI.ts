@@ -49,6 +49,8 @@ export enum DbusAPIFunctions {
     highlightKeyboardBacklightLed = 'highlightKeyboardBacklightLed',
     getLocalDimmingStateJSON = 'getLocalDimmingStateJSON',
     setLocalDimmingEnabled = 'setLocalDimmingEnabled',
+    getHdmiControlStateJSON = 'getHdmiControlStateJSON',
+    setHdmiControlEnabled = 'setHdmiControlEnabled',
     getFansMinSpeed = 'getFansMinSpeed',
     getFansOffAvailable = 'getFansOffAvailable',
     getChargingProfilesAvailable = 'getChargingProfilesAvailable',

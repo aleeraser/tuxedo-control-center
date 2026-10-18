@@ -66,6 +66,8 @@ export class TccDBusData {
     public keyboardKeyPressedJSON: string = '';
     public localDimmingStateJSON: string = '{}';
     public localDimmingEnabledNewJSON: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(undefined);
+    public hdmiControlStateJSON: string = '{}';
+    public hdmiControlEnabledNewJSON: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(undefined);
     public fansMinSpeed: number = -1;
     public fansOffAvailable: boolean = false;
     public sensorDataCollectionStatus: boolean = false;
@@ -362,6 +364,17 @@ export class TccDBusInterface extends dbus.interface.Interface {
         return true;
     }
 
+    // biome-ignore lint: function is never read because of dbus
+    private GetHdmiControlStateJSON(): string {
+        return this.data.hdmiControlStateJSON;
+    }
+
+    // biome-ignore lint: function is never read because of dbus
+    private SetHdmiControlEnabled(enabled: boolean): boolean {
+        this.data.hdmiControlEnabledNewJSON.next(enabled);
+        return true;
+    }
+
     public ModeReapplyPendingChanged(): boolean {
         return this.data.modeReapplyPending;
     }
@@ -531,6 +544,8 @@ TccDBusInterface.configureMembers({
         HighlightKeyboardBacklightLed: { inSignature: 'ib', outSignature: 'b' },
         GetLocalDimmingStateJSON: { outSignature: 's' },
         SetLocalDimmingEnabled: { inSignature: 'b', outSignature: 'b' },
+        GetHdmiControlStateJSON: { outSignature: 's' },
+        SetHdmiControlEnabled: { inSignature: 'b', outSignature: 'b' },
         GetFansMinSpeed: { outSignature: 'i' },
         GetFansOffAvailable: { outSignature: 'b' },
         GetChargingProfilesAvailable: { outSignature: 's' },

@@ -88,6 +88,10 @@ export const DbusClientAPI = {
         ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getLocalDimmingStateJSON]),
     setLocalDimmingEnabled: (localDimmingEnabled: boolean): Promise<boolean> =>
         ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.setLocalDimmingEnabled, localDimmingEnabled]),
+    getHdmiControlStateJSON: (): Promise<string> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getHdmiControlStateJSON]),
+    setHdmiControlEnabled: (enabled: boolean): Promise<boolean> =>
+        ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.setHdmiControlEnabled, enabled]),
     getFansMinSpeed: (): Promise<number> => ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getFansMinSpeed]),
     getFansOffAvailable: (): Promise<boolean> =>
         ipcRenderer.invoke(dbusAPIHandle, [DbusAPIFunctions.getFansOffAvailable]),
@@ -182,6 +186,8 @@ export interface IDbusClientAPI {
     highlightKeyboardBacklightLed: (ledIndex: number, on: boolean) => Promise<boolean>;
     getLocalDimmingStateJSON: () => Promise<string>;
     setLocalDimmingEnabled: (localDimmingEnabled: boolean) => Promise<boolean>;
+    getHdmiControlStateJSON: () => Promise<string>;
+    setHdmiControlEnabled: (enabled: boolean) => Promise<boolean>;
     getFansMinSpeed: () => Promise<number>;
     getFansOffAvailable: () => Promise<boolean>;
     getChargingProfilesAvailable: () => Promise<string[]>;

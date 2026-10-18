@@ -903,6 +903,42 @@ export class TccDBusController {
         }
     }
 
+    async getHdmiControlStateJSON(): Promise<string> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.GetHdmiControlStateJSON();
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: getHdmiControlStateJSON failed => ${err?.text}`);
+                return undefined;
+            }
+
+            console.error(`dbusController: getHdmiControlStateJSON failed => ${err}`);
+            return undefined;
+        }
+    }
+
+    async setHdmiControlEnabled(enabled: boolean): Promise<boolean> {
+        try {
+            if (this.dbusStatus && this.interface) {
+                return await this.interface.SetHdmiControlEnabled(enabled);
+            }
+        } catch (err: unknown) {
+            this.dbusStatus = false;
+
+            if (err instanceof dbus.DBusError) {
+                console.error(`dbusController: setHdmiControlEnabled failed => ${err?.text}`);
+                return undefined;
+            }
+
+            console.error(`dbusController: setHdmiControlEnabled failed => ${err}`);
+            return undefined;
+        }
+    }
+
     async getFansMinSpeed(): Promise<number> {
         try {
             if (this.dbusStatus && this.interface) {

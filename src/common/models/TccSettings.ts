@@ -39,16 +39,16 @@ export interface KeyboardCapabilitiesInterface {
     maxBlue?: number;
 }
 
-export enum LightbarColorModes {
-    keyboard = 'keyboard',
-    custom = 'custom',
-}
-
 export interface LightbarCapabilitiesInterface {
     maxBrightness: number;
     maxRed: number;
     maxGreen: number;
     maxBlue: number;
+}
+
+export enum LightbarColorModes {
+    keyboard = 'keyboard',
+    custom = 'custom',
 }
 
 export interface KeyboardStateInterface {
@@ -80,6 +80,22 @@ export interface LocalDimmingStateInterface {
 export const defaultLocalDimmingState: LocalDimmingStateInterface = {
     supported: false,
     enabled: false,
+};
+
+export interface HdmiControlStateInterface {
+    supported: boolean;
+    enabled: boolean;
+    ruleInstalled: boolean;
+    sessionActive: boolean;
+    sessionInSync: boolean;
+}
+
+export const defaultHdmiControlState: HdmiControlStateInterface = {
+    supported: false,
+    enabled: true,
+    ruleInstalled: false,
+    sessionActive: false,
+    sessionInSync: true,
 };
 
 export {

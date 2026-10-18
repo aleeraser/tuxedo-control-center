@@ -3917,6 +3917,14 @@ Commercial register number - Part B of the commercial register - 27755
         <source>Note: The driver turns local dimming off on every boot. This switch is not persisted, it always reflects the current state.</source>
         <target state="new">Note: The driver turns local dimming off on every boot. This switch is not persisted, it always reflects the current state.</target>
       </trans-unit>
+      <trans-unit id="menuHdmiControl" datatype="html">
+        <source>HDMI Port &amp; GPU Display</source>
+        <target state="new">HDMI Port &amp; GPU Display</target>
+      </trans-unit>
+      <trans-unit id="cHdmiControlLabel" datatype="html">
+        <source>HDMI Port &amp; Discrete GPU Display</source>
+        <target state="new">HDMI Port &amp; Discrete GPU Display</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
